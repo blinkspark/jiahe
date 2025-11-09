@@ -1,6 +1,6 @@
-import 'package:app/pages/AlbumPage.dart';
-import 'package:app/pages/LoginPage.dart';
-import 'package:app/pages/MainPage.dart';
+import 'package:app/pages/album_page.dart';
+import 'package:app/pages/login_page.dart';
+import 'package:app/pages/main_page.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

@@ -48,4 +48,8 @@ class AppStateController extends GetxController {
     var id = _pb.authStore.record!.id;
     await _pb.collection('albums').create(body: {'name': name, 'owner': id});
   }
+
+  Future<void> deleteAlbum(String id) async {
+    await _pb.collection('albums').delete(id);
+  }
 }

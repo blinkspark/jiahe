@@ -1,4 +1,4 @@
-import 'package:app/components/CreateAlbumDialog.dart';
+import 'package:app/components/create_album_dialog.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
