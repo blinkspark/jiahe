@@ -11,6 +11,7 @@ class AlbumPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    appState.fetchAlbums();
     return Scaffold(
       appBar: AppBar(
         title: Text('相册'),
@@ -24,7 +25,34 @@ class AlbumPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(child: Column(children: [])),
+      body: Padding(
+        padding: EdgeInsets.all(10),
+        child: Obx(
+          () => GridView.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 300,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 1,
+            ),
+            itemCount: appState.albums.length,
+            itemBuilder: (context, index) {
+              final album = appState.albums[index];
+              return Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
+                ),
+                child: InkWell(
+                  onTap: () {},
+                  borderRadius: BorderRadius.circular(10),
+                  child: Center(child: Text(album.get<String>('name'))),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

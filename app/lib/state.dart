@@ -1,6 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:logger/logger.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class AppStateController extends GetxController {
@@ -8,13 +9,15 @@ class AppStateController extends GetxController {
   final _box = GetStorage();
   late final AsyncAuthStore _authStore;
   late final PocketBase _pb;
-
+  final Logger logger = Get.find();
+  final RxList<RecordModel> albums = <RecordModel>[].obs;
   AppStateController() {
     _authStore = AsyncAuthStore(
       save: (String data) async => _box.write('pb_auth', data),
       initial: _box.read<String>('pb_auth'),
     );
     _pb = PocketBase(dotenv.get('BASE_URL'), authStore: _authStore);
+    isLogin.value = _pb.authStore.isValid;
     _pb.authStore.onChange.listen((data) {
       isLogin.value = _pb.authStore.isValid;
     });
@@ -51,5 +54,9 @@ class AppStateController extends GetxController {
 
   Future<void> deleteAlbum(String id) async {
     await _pb.collection('albums').delete(id);
+  }
+
+  Future<void> fetchAlbums() async {
+    albums.value = await _pb.collection('albums').getFullList();
   }
 }

@@ -15,16 +15,12 @@ class LoginPage extends StatelessWidget {
 
   Future<void> login() async {
     try {
-      isLoading.value = true;
       await appState.login(email.text, password.text);
       Get.offAllNamed('/');
     } catch (e) {
       logger.e(e);
       // show snackbar
-      Get.snackbar(
-        '登录失败',
-        '登录失败，请检查邮箱和密码是否正确',
-      );
+      Get.snackbar('登录失败', '登录失败，请检查邮箱和密码是否正确');
     } finally {
       isLoading.value = false;
     }
@@ -32,7 +28,6 @@ class LoginPage extends StatelessWidget {
 
   Future<void> register() async {
     try {
-      isLoading.value = true;
       await appState.register(email.text, password.text, confirmPassword.text);
       Get.offAllNamed('/');
     } catch (e) {
@@ -41,6 +36,15 @@ class LoginPage extends StatelessWidget {
       Get.snackbar('注册失败', '注册失败，请检查邮箱和密码是否正确');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchAlbums() async {
+    try {
+      await appState.fetchAlbums();
+    } catch (e) {
+      logger.e(e);
+      Get.snackbar('错误', '获取相册失败');
     }
   }
 
@@ -113,6 +117,7 @@ class LoginPage extends StatelessWidget {
               onPressed: () async {
                 // 防抖动：如果是加载中，直接返回
                 if (isLoading.value) return;
+                isLoading.value = true;
                 if (isRegister.value) {
                   // 处理注册逻辑
                   if (password.text != confirmPassword.text) {
@@ -123,13 +128,14 @@ class LoginPage extends StatelessWidget {
                       // colorText: Theme.of(Get.context!).colorScheme.onError,
                       // backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.5),
                     );
+                    isLoading.value = false;
                     return;
                   }
-                  await register();
+                  register();
                 } else {
-                  // 处理登录逻辑
-                  await login();
+                  login();
                 }
+                isLoading.value = false;
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -163,7 +169,6 @@ class LoginPage extends StatelessWidget {
             TextButton(
               onPressed: () {
                 isRegister.value = !isRegister.value;
-                logger.d('切换到${isRegister.value ? "注册" : "登录"}模式');
               },
               child: Obx(
                 () => Text(isRegister.value ? '已有账号？点击登录' : '没有账号？点击注册'),
