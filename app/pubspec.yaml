@@ -11,7 +11,9 @@ dependencies:
     sdk: flutter
   flutter_dotenv: ^6.0.0
   get: ^4.7.2
+  get_storage: ^2.1.1
   google_fonts: ^6.3.2
+  logger: ^2.6.2
   pocketbase: ^0.23.0+1
 
 dev_dependencies:
