@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 class CreateAlbumDialog extends StatelessWidget {
   final AppStateController appState = Get.find();
   final Logger logger = Get.find();
+  final nameController = TextEditingController();
 
   CreateAlbumDialog({super.key});
 
@@ -23,6 +24,7 @@ class CreateAlbumDialog extends StatelessWidget {
       content: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: TextField(
+          controller: nameController,
           decoration: InputDecoration(
             hintText: '相册名称',
             border: OutlineInputBorder(
@@ -36,9 +38,21 @@ class CreateAlbumDialog extends StatelessWidget {
       actions: [
         TextButton(onPressed: () => Get.back(), child: const Text('取消')),
         ElevatedButton(
-          onPressed: () {
-            Get.back();
-            Get.snackbar('成功', '相册创建成功');
+          onPressed: () async {
+            try {
+              logger.d(nameController.text);
+              if (nameController.text.isEmpty) {
+                Get.snackbar('失败', '相册名称不能为空');
+                return;
+              }
+              await appState.createAlbum(nameController.text);
+              Get.back();
+              Get.snackbar('成功', '相册创建成功');
+            } catch (e) {
+              Get.back();
+              Get.snackbar('失败', '相册创建失败');
+              logger.e(e);
+            }
           },
           child: const Text('创建'),
         ),

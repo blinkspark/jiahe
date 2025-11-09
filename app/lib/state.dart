@@ -43,4 +43,9 @@ class AppStateController extends GetxController {
           },
         );
   }
+
+  Future<void> createAlbum(String name) async {
+    var id = _pb.authStore.record!.id;
+    await _pb.collection('albums').create(body: {'name': name, 'owner': id});
+  }
 }
