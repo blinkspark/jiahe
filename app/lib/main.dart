@@ -1,3 +1,4 @@
+import 'package:app/pages/AlbumPage.dart';
 import 'package:app/pages/LoginPage.dart';
 import 'package:app/pages/MainPage.dart';
 import 'package:app/state.dart';
@@ -12,7 +13,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await dotenv.load();
-  Get.lazyPut(() => StateController());
+  Get.lazyPut(() => AppStateController());
   Get.lazyPut(() => Logger(level: Level.debug));
   runApp(MainApp());
 }
@@ -22,7 +23,7 @@ Logger newLogger() {
 }
 
 class MainApp extends StatelessWidget {
-  final controller = Get.find<StateController>();
+  final controller = Get.find<AppStateController>();
   final logger = Get.find<Logger>();
 
   MainApp({super.key});
@@ -38,6 +39,7 @@ class MainApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: () => MainPage()),
         GetPage(name: '/login', page: () => LoginPage()),
+        GetPage(name: '/album', page: () => AlbumPage()),
       ],
     );
   }

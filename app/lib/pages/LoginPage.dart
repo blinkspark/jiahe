@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:logger/web.dart';
 
 class LoginPage extends StatelessWidget {
-  final appState = Get.find<StateController>();
+  final appState = Get.find<AppStateController>();
   final logger = Get.find<Logger>();
   final isRegister = false.obs;
   final isLoading = false.obs;

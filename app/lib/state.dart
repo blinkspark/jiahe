@@ -3,13 +3,13 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pocketbase/pocketbase.dart';
 
-class StateController extends GetxController {
+class AppStateController extends GetxController {
   final isLogin = false.obs;
   final _box = GetStorage();
   late final AsyncAuthStore _authStore;
   late final PocketBase _pb;
 
-  StateController() {
+  AppStateController() {
     _authStore = AsyncAuthStore(
       save: (String data) async => _box.write('pb_auth', data),
       initial: _box.read<String>('pb_auth'),

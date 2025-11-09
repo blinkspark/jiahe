@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MainPage extends StatelessWidget {
-  final appState = Get.find<StateController>();
+  final appState = Get.find<AppStateController>();
 
   MainPage({super.key});
 
@@ -22,6 +22,12 @@ class MainPage extends StatelessWidget {
                 Get.toNamed('/login');
               },
               child: Text('Login'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.toNamed('/album');
+              },
+              child: Text('Album'),
             ),
             ElevatedButton(
               onPressed: () {
