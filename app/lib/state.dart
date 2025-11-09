@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -13,7 +14,7 @@ class StateController extends GetxController {
       save: (String data) async => _box.write('pb_auth', data),
       initial: _box.read<String>('pb_auth'),
     );
-    _pb = PocketBase('http://127.0.0.1:8090', authStore: _authStore);
+    _pb = PocketBase(dotenv.get('BASE_URL'), authStore: _authStore);
     _pb.authStore.onChange.listen((data) {
       isLogin.value = _pb.authStore.isValid;
     });

@@ -125,13 +125,9 @@ class LoginPage extends StatelessWidget {
                     );
                     return;
                   }
-                  logger.d(
-                    '注册 - 邮箱: ${email.text}, 密码: ${password.text}, 确认密码: ${confirmPassword.text}',
-                  );
                   await register();
                 } else {
                   // 处理登录逻辑
-                  logger.d('登录 - 邮箱: ${email.text}, 密码: ${password.text}');
                   await login();
                 }
               },
