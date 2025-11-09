@@ -12,9 +12,39 @@ class CreateAlbumDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('创建相册'),
-      content: TextField(decoration: const InputDecoration(hintText: '相册名称')),
-      actions: [TextButton(onPressed: () {}, child: const Text('创建'))],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      title: Row(
+        children: [
+          Icon(Icons.photo_album, color: Theme.of(context).primaryColor),
+          const SizedBox(width: 8),
+          const Text('创建相册'),
+        ],
+      ),
+      content: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: TextField(
+          decoration: InputDecoration(
+            hintText: '相册名称',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            filled: true,
+            fillColor: Get.theme.colorScheme.surface,
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('取消'),
+        ),
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text('创建'),
+        ),
+      ],
     );
   }
 }

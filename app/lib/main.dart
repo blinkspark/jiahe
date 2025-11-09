@@ -33,7 +33,7 @@ class MainApp extends StatelessWidget {
     return GetMaterialApp(
       theme: _buildTheme(Brightness.light, Colors.blue),
       darkTheme: _buildTheme(Brightness.dark, Colors.blue),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       getPages: [
