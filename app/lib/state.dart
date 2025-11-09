@@ -1,8 +1,10 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:http/http.dart' as http;
 
 class AppStateController extends GetxController {
   final isLogin = false.obs;
@@ -58,5 +60,20 @@ class AppStateController extends GetxController {
 
   Future<void> fetchAlbums() async {
     albums.value = await _pb.collection('albums').getFullList();
+  }
+
+  Future<void> addFileToAlbum(String? albumId, PlatformFile file) async {
+    await _pb
+        .collection('photos')
+        .create(
+          body: {'name': file.name},
+          files: [
+            http.MultipartFile.fromBytes(
+              'content',
+              file.bytes!,
+              filename: file.name,
+            ),
+          ],
+        );
   }
 }
