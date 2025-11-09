@@ -31,6 +31,18 @@ class MainPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
+                Get.changeThemeMode(ThemeMode.light);
+              },
+              child: Text('亮主题'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.changeThemeMode(ThemeMode.dark);
+              },
+              child: Text('暗主题'),
+            ),
+            ElevatedButton(
+              onPressed: () {
                 appState.logout();
               },
               child: Text('注销'),
