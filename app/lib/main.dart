@@ -12,6 +12,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await dotenv.load();
+  Get.lazyPut(() => StateController());
+  Get.lazyPut(() => Logger(level: Level.debug));
   runApp(MainApp());
 }
 
@@ -20,8 +22,8 @@ Logger newLogger() {
 }
 
 class MainApp extends StatelessWidget {
-  final controller = Get.put(StateController());
-  final logger = Get.put(Logger());
+  final controller = Get.find<StateController>();
+  final logger = Get.find<Logger>();
 
   MainApp({super.key});
 
