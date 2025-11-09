@@ -25,7 +25,7 @@ class MainPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Get.toNamed('/album');
+                Get.toNamed('/albums');
               },
               child: Text('相册'),
             ),
