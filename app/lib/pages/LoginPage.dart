@@ -7,6 +7,7 @@ class LoginPage extends StatelessWidget {
   final appState = Get.find<StateController>();
   final logger = Get.find<Logger>();
   final isRegister = false.obs;
+  final isLoading = false.obs;
   final email = TextEditingController();
   final password = TextEditingController();
   final confirmPassword = TextEditingController();
@@ -14,6 +15,7 @@ class LoginPage extends StatelessWidget {
 
   Future<void> login() async {
     try {
+      isLoading.value = true;
       await appState.login(email.text, password.text);
       Get.offAllNamed('/');
     } catch (e) {
@@ -22,20 +24,23 @@ class LoginPage extends StatelessWidget {
       Get.snackbar(
         '登录失败',
         '登录失败，请检查邮箱和密码是否正确',
-        colorText: Get.theme.colorScheme.onError,
-        overlayColor: Get.theme.colorScheme.error,
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 
   Future<void> register() async {
     try {
+      isLoading.value = true;
       await appState.register(email.text, password.text, confirmPassword.text);
       Get.offAllNamed('/');
     } catch (e) {
       logger.e(e);
       // show snackbar
-      Get.snackbar('注册失败', e.toString());
+      Get.snackbar('注册失败', '注册失败，请检查邮箱和密码是否正确');
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -106,6 +111,8 @@ class LoginPage extends StatelessWidget {
             // 登录/注册按钮
             ElevatedButton(
               onPressed: () async {
+                // 防抖动：如果是加载中，直接返回
+                if (isLoading.value) return;
                 if (isRegister.value) {
                   // 处理注册逻辑
                   if (password.text != confirmPassword.text) {
@@ -113,8 +120,8 @@ class LoginPage extends StatelessWidget {
                     Get.snackbar(
                       '注册失败',
                       '密码和确认密码不匹配',
-                      colorText: Get.theme.colorScheme.onError,
-                      overlayColor: Get.theme.colorScheme.error,
+                      // colorText: Theme.of(Get.context!).colorScheme.onError,
+                      // backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.5),
                     );
                     return;
                   }
@@ -134,8 +141,24 @@ class LoginPage extends StatelessWidget {
                   vertical: 15,
                 ),
                 textStyle: const TextStyle(fontSize: 16),
+                backgroundColor: Get.theme.colorScheme.primary,
               ),
-              child: Obx(() => Text(isRegister.value ? '注册' : '登录')),
+              child: Obx(() {
+                if (isLoading.value) {
+                  return const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  );
+                }
+                return Text(
+                  isRegister.value ? '注册' : '登录',
+                  style: TextStyle(color: Get.theme.colorScheme.onPrimary),
+                );
+              }),
             ),
 
             const SizedBox(height: 10),
