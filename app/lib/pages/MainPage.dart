@@ -21,19 +21,19 @@ class MainPage extends StatelessWidget {
               onPressed: () {
                 Get.toNamed('/login');
               },
-              child: Text('Login'),
+              child: Text('登录'),
             ),
             ElevatedButton(
               onPressed: () {
                 Get.toNamed('/album');
               },
-              child: Text('Album'),
+              child: Text('相册'),
             ),
             ElevatedButton(
               onPressed: () {
                 appState.logout();
               },
-              child: Text('Logout'),
+              child: Text('注销'),
             ),
           ],
         ),

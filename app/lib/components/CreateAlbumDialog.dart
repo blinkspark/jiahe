@@ -12,12 +12,10 @@ class CreateAlbumDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       title: Row(
         children: [
-          Icon(Icons.photo_album, color: Theme.of(context).primaryColor),
+          Icon(Icons.photo_album, color: Get.theme.colorScheme.primary),
           const SizedBox(width: 8),
           const Text('创建相册'),
         ],
@@ -36,12 +34,12 @@ class CreateAlbumDialog extends StatelessWidget {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('取消'),
-        ),
+        TextButton(onPressed: () => Get.back(), child: const Text('取消')),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.back();
+            Get.snackbar('成功', '相册创建成功');
+          },
           child: const Text('创建'),
         ),
       ],
