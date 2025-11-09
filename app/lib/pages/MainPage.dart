@@ -16,12 +16,18 @@ class MainPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 20,
           children: [
-            Text('Is LogIn: ${appState.isLogin}'),
+            Obx(() => Text('Is LogIn: ${appState.isLogin}')),
             ElevatedButton(
               onPressed: () {
                 Get.toNamed('/login');
               },
               child: Text('Login'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                appState.logout();
+              },
+              child: Text('Logout'),
             ),
           ],
         ),

@@ -22,4 +22,24 @@ class StateController extends GetxController {
   Future<void> login(String email, String password) async {
     await _pb.collection('users').authWithPassword(email, password);
   }
+
+  Future<void> logout() async {
+    _pb.authStore.clear();
+  }
+
+  Future<void> register(
+    String email,
+    String password,
+    String passwordConfirm,
+  ) async {
+    await _pb
+        .collection('users')
+        .create(
+          body: {
+            'email': email,
+            'password': password,
+            'passwordConfirm': passwordConfirm,
+          },
+        );
+  }
 }
