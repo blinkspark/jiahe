@@ -82,6 +82,7 @@ class AppStateController extends GetxController {
     final photosRes = album.get<List<String>>('photos').map((id) {
       return _pb.collection('photos').getOne(id);
     }).toList();
+    logger.d(photosRes);
     final photos = await Future.wait(photosRes);
     final photosWithURL = photos.map((photo) {
       return {
@@ -94,6 +95,7 @@ class AppStateController extends GetxController {
         'url': _pb.files.getURL(photo, photo.get<String>('name')),
       };
     }).toList();
+    logger.d(photosWithURL);
     return photosWithURL;
   }
 }

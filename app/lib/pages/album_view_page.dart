@@ -9,7 +9,7 @@ import 'package:pocketbase/pocketbase.dart';
 class AlbumViewPage extends StatelessWidget {
   final AppStateController appState = Get.find();
   final Logger logger = Get.find();
-  final RxList<Map<String, Object>> photos = <Map<String, Object>>[].obs;
+  final photos = <Map<String, Object>>[].obs;
   AlbumViewPage({super.key});
 
   Future<void> getPhotos(String albumId) async {
@@ -58,7 +58,7 @@ class AlbumViewPage extends StatelessWidget {
               return Card(
                 child: InkWell(
                   onTap: () {},
-                  child: Image.network(url!.toString(), fit: BoxFit.fill),
+                  child: Image.network(url!.toString(), fit: BoxFit.cover),
                 ),
               );
             },
