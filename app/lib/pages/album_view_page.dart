@@ -3,8 +3,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:crypto/crypto.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 class AlbumViewPage extends StatelessWidget {
   final AppStateController appState = Get.find();
@@ -23,19 +21,25 @@ class AlbumViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    logger.d(Get.parameters);
     final albumId = Get.parameters['id'];
+    final name = Get.parameters['name'];
     getPhotos(albumId!);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Album View'),
+        title: Text(name!),
         centerTitle: true,
         actions: [
           IconButton(
             onPressed: () async {
               var res = await FilePicker.platform.pickFiles(withData: true);
-              res?.files.forEach((file) {
-                logger.d(file);
-                appState.addFileToAlbum(albumId, file);
+              res?.files.forEach((file) async {
+                try {
+                  await appState.createPhotoToAlbum(albumId, file);
+                } catch (e) {
+                  logger.e(e);
+                  Get.snackbar('错误', '上传照片失败');
+                }
               });
             },
             icon: const Icon(Icons.add),
@@ -57,7 +61,12 @@ class AlbumViewPage extends StatelessWidget {
               final url = photos[index]['preview_url'] as Uri?;
               return Card(
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    logger.d('tap');
+                  },
+                  onLongPress: () {
+                    logger.d('long press');
+                  },
                   child: Image.network(url!.toString(), fit: BoxFit.cover),
                 ),
               );

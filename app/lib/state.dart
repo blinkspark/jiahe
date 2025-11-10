@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:http/http.dart' as http;
+import 'package:crypto/crypto.dart';
 
 class AppStateController extends GetxController {
   final isLogin = false.obs;
@@ -12,7 +13,6 @@ class AppStateController extends GetxController {
   late final AsyncAuthStore _authStore;
   late final PocketBase _pb;
   final Logger logger = Get.find();
-  final RxList<RecordModel> albums = <RecordModel>[].obs;
   AppStateController() {
     _authStore = AsyncAuthStore(
       save: (String data) async => _box.write('pb_auth', data),
@@ -58,15 +58,22 @@ class AppStateController extends GetxController {
     await _pb.collection('albums').delete(id);
   }
 
-  Future<void> fetchAlbums() async {
-    albums.value = await _pb.collection('albums').getFullList();
+  Future<List<RecordModel>> fetchAlbums() async {
+    return await _pb.collection('albums').getFullList();
   }
 
-  Future<void> addFileToAlbum(String? albumId, PlatformFile file) async {
+  Future<void> createPhotoToAlbum(String? albumId, PlatformFile file) async {
+    final userID = _pb.authStore.record!.id;
+    final dig = sha512.convert(file.bytes!);
     await _pb
         .collection('photos')
         .create(
-          body: {'name': file.name},
+          body: {
+            'name': file.name,
+            'hash': dig.toString(),
+            'owner': userID,
+            'albums': [albumId],
+          },
           files: [
             http.MultipartFile.fromBytes(
               'content',
@@ -78,24 +85,23 @@ class AppStateController extends GetxController {
   }
 
   Future<List<Map<String, Object>>> fetchAlbumPhotos(String id) async {
-    final album = await _pb.collection('albums').getOne(id);
-    final photosRes = album.get<List<String>>('photos').map((id) {
-      return _pb.collection('photos').getOne(id);
-    }).toList();
-    logger.d(photosRes);
-    final photos = await Future.wait(photosRes);
-    final photosWithURL = photos.map((photo) {
+    final filter = 'albums.id ?= "$id"';
+    logger.d('filter: $filter');
+    final photos = await _pb.collection('photos').getFullList(filter: filter);
+    logger.d('album: $id, list: $photos');
+    final result = photos.map((photo) {
       return {
+        'id': photo.id,
         'name': photo.get<String>('name'),
+        // 'hash': photo.get<String>('hash'),
         'preview_url': _pb.files.getURL(
           photo,
           photo.get<String>('content'),
-          thumb: '100x100',
+          thumb: '200x200',
         ),
-        'url': _pb.files.getURL(photo, photo.get<String>('name')),
+        'url': _pb.files.getURL(photo, photo.get<String>('content')),
       };
     }).toList();
-    logger.d(photosWithURL);
-    return photosWithURL;
+    return result;
   }
 }

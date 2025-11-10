@@ -3,17 +3,19 @@ import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 class AlbumsPage extends StatelessWidget {
   final appState = Get.find<AppStateController>();
   final logger = Get.find<Logger>();
   final isFetching = false.obs;
+  final albums = <RecordModel>[].obs;
   AlbumsPage({super.key});
 
   Future<void> fetchAlbums() async {
     isFetching.value = true;
     try {
-      await appState.fetchAlbums();
+      albums.value = await appState.fetchAlbums();
     } catch (e) {
       logger.e(e);
       Get.snackbar('错误', '获取相册失败');
@@ -46,14 +48,14 @@ class AlbumsPage extends StatelessWidget {
           } else {
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 300,
+                maxCrossAxisExtent: 200,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 childAspectRatio: 1,
               ),
-              itemCount: appState.albums.length,
+              itemCount: albums.length,
               itemBuilder: (context, index) {
-                final album = appState.albums[index];
+                final album = albums[index];
                 return Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -61,7 +63,9 @@ class AlbumsPage extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () {
-                      Get.toNamed('/album/${album.get<String>('id')}');
+                      Get.toNamed(
+                        '/album/${album.get<String>('id')}?name=${album.get<String>('name')}',
+                      );
                     },
                     borderRadius: BorderRadius.circular(10),
                     child: Center(child: Text(album.get<String>('name'))),
