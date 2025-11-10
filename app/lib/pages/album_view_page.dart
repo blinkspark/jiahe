@@ -1,4 +1,5 @@
 import 'package:app/state.dart';
+import 'package:app/components/photo_grid.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,30 +49,15 @@ class AlbumViewPage extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(10),
-        child: Obx(
-          () => GridView.builder(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 1,
-            ),
-            itemCount: photos.length,
-            itemBuilder: (context, index) {
-              final url = photos[index]['preview_url'] as Uri?;
-              return Card(
-                child: InkWell(
-                  onTap: () {
-                    logger.d('tap');
-                  },
-                  onLongPress: () {
-                    logger.d('long press');
-                  },
-                  child: Image.network(url!.toString(), fit: BoxFit.cover),
-                ),
-              );
-            },
-          ),
+        child: PhotoGrid(
+          photos: photos,
+          onTap: (index) {
+            logger.d('tap');
+          },
+          onLongPress: (index) {
+            logger.d('long press');
+          },
+          logger: logger,
         ),
       ),
     );
