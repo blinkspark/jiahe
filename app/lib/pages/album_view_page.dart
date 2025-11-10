@@ -9,11 +9,16 @@ import 'package:pocketbase/pocketbase.dart';
 class AlbumViewPage extends StatelessWidget {
   final AppStateController appState = Get.find();
   final Logger logger = Get.find();
+  final RxList<Map<String, Object>> photos = <Map<String, Object>>[].obs;
   AlbumViewPage({super.key});
 
   Future<void> getPhotos(String albumId) async {
-    final photos = await appState.fetchAlbumPhotos(albumId);
-    logger.d(photos);
+    try {
+      photos.value = await appState.fetchAlbumPhotos(albumId);
+      logger.d(photos);
+    } catch (e) {
+      Get.snackbar('错误', '获取相册照片失败');
+    }
   }
 
   @override
@@ -33,11 +38,33 @@ class AlbumViewPage extends StatelessWidget {
                 appState.addFileToAlbum(albumId, file);
               });
             },
-            icon: const Icon(Icons.add_a_photo),
+            icon: const Icon(Icons.add),
           ),
         ],
       ),
-      body: Center(child: Text('Album View $albumId')),
+      body: Padding(
+        padding: EdgeInsets.all(10),
+        child: Obx(
+          () => GridView.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 1,
+            ),
+            itemCount: photos.length,
+            itemBuilder: (context, index) {
+              final url = photos[index]['preview_url'] as Uri?;
+              return Card(
+                child: InkWell(
+                  onTap: () {},
+                  child: Image.network(url!.toString(), fit: BoxFit.fill),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

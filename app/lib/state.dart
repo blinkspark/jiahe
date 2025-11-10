@@ -77,11 +77,23 @@ class AppStateController extends GetxController {
         );
   }
 
-  Future<List<RecordModel>> fetchAlbumPhotos(String id) async {
+  Future<List<Map<String, Object>>> fetchAlbumPhotos(String id) async {
     final album = await _pb.collection('albums').getOne(id);
     final photosRes = album.get<List<String>>('photos').map((id) {
       return _pb.collection('photos').getOne(id);
     }).toList();
-    return await Future.wait(photosRes);
+    final photos = await Future.wait(photosRes);
+    final photosWithURL = photos.map((photo) {
+      return {
+        'name': photo.get<String>('name'),
+        'preview_url': _pb.files.getURL(
+          photo,
+          photo.get<String>('content'),
+          thumb: '100x100',
+        ),
+        'url': _pb.files.getURL(photo, photo.get<String>('name')),
+      };
+    }).toList();
+    return photosWithURL;
   }
 }
