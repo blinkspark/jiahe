@@ -1,3 +1,4 @@
+import 'package:app/pages/photo_view_page.dart';
 import 'package:app/state.dart';
 import 'package:app/components/photo_grid.dart';
 import 'package:file_picker/file_picker.dart';
@@ -52,10 +53,10 @@ class AlbumViewPage extends StatelessWidget {
         child: PhotoGrid(
           photos: photos,
           onTap: (index) {
-            logger.d('tap');
+            Get.to(PhotoViewPage(photos: photos, index: index));
           },
           onLongPress: (index) {
-            logger.d('long press');
+            logger.d('TODO: long press');
           },
           logger: logger,
         ),
