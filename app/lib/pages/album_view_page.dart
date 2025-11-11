@@ -34,7 +34,9 @@ class AlbumViewPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () async {
-              var res = await FilePicker.platform.pickFiles(withData: true);
+              var res = await FilePicker.platform.pickFiles(
+                withReadStream: true,
+              );
               res?.files.forEach((file) async {
                 try {
                   await appState.createPhotoToAlbum(albumId, file);
