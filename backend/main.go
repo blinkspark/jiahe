@@ -1,6 +1,9 @@
 package main
 
 import (
+	"crypto/sha512"
+	"encoding/hex"
+	"io"
 	"log"
 	"net/http"
 
@@ -27,6 +30,25 @@ func main() {
 		}).Bind(apis.RequireAuth())
 
 		return se.Next()
+	})
+
+	app.OnRecordCreate("photos").BindFunc(func(e *core.RecordEvent) error {
+		files := e.Record.GetUnsavedFiles("content")
+		for _, file := range files {
+			reader, err := file.Reader.Open()
+			if err != nil {
+				return err
+			}
+			defer reader.Close()
+			hasher := sha512.New()
+			_, err = io.Copy(hasher, reader)
+			if err != nil {
+				return err
+			}
+			hash := hasher.Sum(nil)
+			e.Record.Set("hash", hex.EncodeToString(hash))
+		}
+		return e.Next()
 	})
 
 	if err := app.Start(); err != nil {

@@ -64,8 +64,13 @@ class AppStateController extends GetxController {
 
   Future<void> createPhotoToAlbum(String? albumId, PlatformFile file) async {
     final userID = _pb.authStore.record!.id;
-    final dig = sha512.convert(file.bytes!);
-    final f = http.MultipartFile('content', file.readStream!, file.size);
+    logger.d(file);
+    final f = http.MultipartFile(
+      'content',
+      file.readStream!,
+      file.size,
+      filename: file.name,
+    );
     await _pb
         .collection('photos')
         .create(
