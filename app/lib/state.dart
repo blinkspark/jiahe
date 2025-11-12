@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,13 @@ class AppStateController extends GetxController {
   late final AsyncAuthStore _authStore;
   late final PocketBase _pb;
   final Logger logger = Get.find();
+  
+  // 上传状态管理
+  final isUploading = false.obs;
+  final uploadProgress = 0.0.obs;
+  final uploadingFiles = <String>[].obs;
+  final uploadStatus = ''.obs;
+  
   AppStateController() {
     _authStore = AsyncAuthStore(
       save: (String data) async => _box.write('pb_auth', data),
@@ -64,23 +72,62 @@ class AppStateController extends GetxController {
 
   Future<void> createPhotoToAlbum(String? albumId, PlatformFile file) async {
     final userID = _pb.authStore.record!.id;
-    logger.d(file);
-    final f = http.MultipartFile(
-      'content',
-      file.readStream!,
-      file.size,
-      filename: file.name,
-    );
-    await _pb
-        .collection('photos')
-        .create(
-          body: {
-            'name': file.name,
-            'owner': userID,
-            'albums': [albumId],
-          },
-          files: [f],
-        );
+    
+    // 开始上传
+    isUploading.value = true;
+    uploadProgress.value = 0.0;
+    uploadingFiles.add(file.name);
+    uploadStatus.value = '准备上传: ${file.name}';
+    
+    try {
+      logger.d(file);
+      
+      // 更新上传状态
+      uploadProgress.value = 0.2;
+      uploadStatus.value = '读取文件: ${file.name}';
+      
+      final f = http.MultipartFile(
+        'content',
+        file.readStream!,
+        file.size,
+        filename: file.name,
+      );
+      
+      // 更新上传状态
+      uploadProgress.value = 0.5;
+      uploadStatus.value = '上传中: ${file.name}';
+      
+      await _pb
+          .collection('photos')
+          .create(
+            body: {
+              'name': file.name,
+              'owner': userID,
+              'albums': [albumId],
+            },
+            files: [f],
+          );
+      
+      // 上传完成
+      uploadProgress.value = 1.0;
+      uploadStatus.value = '上传完成: ${file.name}';
+      
+      // 延迟一下让用户看到完成状态
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+    } catch (e) {
+      uploadStatus.value = '上传失败: ${file.name}';
+      logger.e('上传失败: $e');
+      rethrow;
+    } finally {
+      // 清除上传状态
+      uploadingFiles.remove(file.name);
+      if (uploadingFiles.isEmpty) {
+        isUploading.value = false;
+        uploadProgress.value = 0.0;
+        uploadStatus.value = '';
+      }
+    }
   }
 
   Future<List<Map<String, Object>>> fetchAlbumPhotos(String id) async {
