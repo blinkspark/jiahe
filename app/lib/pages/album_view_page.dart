@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:app/pages/photo_view_page.dart';
 import 'package:app/state.dart';
 import 'package:app/components/photo_grid.dart';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -233,7 +236,13 @@ class AlbumViewPage extends StatelessWidget {
     try {
       // 这里应该实现保存到本地的功能
       logger.d('保存照片到本地: ${photos[index]['id']}');
-      Get.snackbar('成功', '照片已保存到本地');
+      final path = await FilePicker.platform.getDirectoryPath();
+      if (path != null) {
+        final file = File('$path/${photos[index]['name']}');
+        await Dio().download(photos[index]['url'].toString(), file.path);
+        logger.d('照片已保存到本地: $path');
+        Get.snackbar('成功', '照片已保存到本地');
+      }
     } catch (e) {
       logger.e(e);
       Get.snackbar('错误', '保存照片失败');
