@@ -271,16 +271,8 @@ class AlbumViewPage extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                '文件名: ${photo['filename'] ?? '未知'}',
+                '文件名: ${photo['name'] ?? '未知'}',
                 style: TextStyle(color: theme.colorScheme.onSurface),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'URL: ${photo['preview_url']}',
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  fontSize: 12,
-                ),
               ),
               SizedBox(height: 8),
               Text(
