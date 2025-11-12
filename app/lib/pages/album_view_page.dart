@@ -317,8 +317,9 @@ class AlbumViewPage extends StatelessWidget {
   String _formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024)
+    if (bytes < 1024 * 1024 * 1024) {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 
@@ -352,7 +353,7 @@ class AlbumViewPage extends StatelessWidget {
                   try {
                     await appState.createPhotoToAlbum(albumId, file);
                     // 上传成功后刷新照片列表
-                    await getPhotos(albumId!);
+                    await getPhotos(albumId);
                   } catch (e) {
                     logger.e(e);
                     Get.snackbar('错误', '上传照片失败: ${file.name}');
