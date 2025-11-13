@@ -215,10 +215,7 @@ class AlbumsPage extends StatelessWidget {
 
     if (confirm == true && controller.text.trim().isNotEmpty) {
       try {
-        // 这里应该调用重命名API
-        logger.d(
-          '重命名相册: ${album.get<String>('id')} -> ${controller.text.trim()}',
-        );
+        await appState.renameAlbum(album.get<String>('id'), controller.text.trim());
         Get.snackbar('成功', '相册已重命名');
         await fetchAlbums(); // 刷新列表
       } catch (e) {

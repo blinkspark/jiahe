@@ -65,6 +65,10 @@ class AppStateController extends GetxController {
     await _pb.collection('albums').create(body: {'name': name, 'owner': id});
   }
 
+  Future<void> renameAlbum(String id, String name) async {
+    await _pb.collection('albums').update(id, body: {'name': name});
+  }
+
   Future<void> deleteAlbum(String id) async {
     final album = await _pb.collection('albums').getOne(id);
     final photos = album.getListValue<String>('photos');
