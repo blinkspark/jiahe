@@ -13,7 +13,7 @@ class AppStateController extends GetxController {
   final _box = GetStorage();
   late final AsyncAuthStore _authStore;
   late final PocketBase _pb;
-  final Logger logger = Get.find();
+  late final Logger logger;
 
   // 上传状态管理
   final isUploading = false.obs;
@@ -21,7 +21,10 @@ class AppStateController extends GetxController {
   final uploadingFiles = <String>[].obs;
   final uploadStatus = ''.obs;
 
-  AppStateController() {
+  @override
+  void onInit() {
+    super.onInit();
+    logger = Get.find<Logger>();
     _authStore = AsyncAuthStore(
       save: (String data) async => _box.write('pb_auth', data),
       initial: _box.read<String>('pb_auth'),

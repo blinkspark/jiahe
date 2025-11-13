@@ -14,8 +14,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await dotenv.load();
-  Get.lazyPut(() => AppStateController());
-  Get.lazyPut(() => Logger(level: Level.all));
+  Get.put(Logger(level: Level.all));
+  Get.put(AppStateController());
   runApp(MainApp());
 }
 
