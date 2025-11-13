@@ -103,17 +103,21 @@ class AppStateController extends GetxController {
       uploadProgress.value = 0.5;
       uploadStatus.value = '上传中: ${file.name}';
 
-      await _pb
+      final result = await _pb
           .collection('photos')
           .create(
             body: {
               'name': file.name,
               'owner': userID,
-              'albums': [albumId],
+              'size': file.size,
               'hash': hash.toString(),
             },
             files: [f],
           );
+
+      await _pb
+          .collection('albums')
+          .update(albumId!, body: {'photos+': result.id});
 
       // 上传完成
       uploadProgress.value = 1.0;
@@ -169,6 +173,7 @@ class AppStateController extends GetxController {
           .collection('albums')
           .getFirstListItem('photos.id ?= "$photoID"');
     } catch (e) {
+      // TODO: 删除图片变成delay 30天 删除
       await _pb.collection('photos').delete(photoID);
     }
   }
