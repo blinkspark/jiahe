@@ -18,8 +18,8 @@ class AlbumViewPage extends StatelessWidget {
   Future<void> getPhotos(String albumId) async {
     try {
       photos.value = await appState.fetchAlbumPhotos(albumId);
-      logger.d(photos);
     } catch (e) {
+      logger.e(e);
       Get.snackbar('错误', '获取相册照片失败');
     }
   }
@@ -84,7 +84,12 @@ class AlbumViewPage extends StatelessWidget {
                   title: '删除照片',
                   onTap: () async {
                     Get.back();
-                    await _deletePhoto(index, context);
+                    try {
+                      await _deletePhoto(index, context);
+                    } catch (e) {
+                      logger.e(e);
+                      Get.snackbar('错误', '删除照片失败');
+                    }
                   },
                 ),
                 _buildMenuItem(
@@ -211,7 +216,10 @@ class AlbumViewPage extends StatelessWidget {
 
       if (confirm == true) {
         // 执行删除操作
-        await appState.removePhoto(photo['id'].toString());
+        await appState.removePhoto(
+          Get.parameters['id']!,
+          photo['id'].toString(),
+        );
         await getPhotos(Get.parameters['id']!);
         Get.snackbar('成功', '照片已删除');
       }
@@ -223,7 +231,7 @@ class AlbumViewPage extends StatelessWidget {
 
   Future<void> _sharePhoto(int index) async {
     try {
-      // 这里应该实现分享功能，可能需要使用 share_plus 插件
+      // TODO: 这里应该实现分享功能
       logger.d('分享照片: ${photos[index]['id']}');
       Get.snackbar('提示', '分享功能开发中');
     } catch (e) {

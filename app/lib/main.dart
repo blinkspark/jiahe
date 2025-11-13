@@ -15,7 +15,7 @@ Future<void> main() async {
   await GetStorage.init();
   await dotenv.load();
   Get.lazyPut(() => AppStateController());
-  Get.lazyPut(() => Logger(level: Level.debug));
+  Get.lazyPut(() => Logger(level: Level.all));
   runApp(MainApp());
 }
 

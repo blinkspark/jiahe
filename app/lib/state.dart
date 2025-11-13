@@ -139,8 +139,13 @@ class AppStateController extends GetxController {
   Future<List<Map<String, Object>>> fetchAlbumPhotos(String id) async {
     final filter = 'albums.id ?= "$id"';
     logger.d('filter: $filter');
-    final photos = await _pb.collection('photos').getFullList(filter: filter);
-    logger.d('album: $id, list: $photos');
+
+    final testAlbum = await _pb
+        .collection('albums')
+        .getOne(id, expand: "photos");
+    final photos = testAlbum.get<List<RecordModel>>('expand.photos');
+
+    // final photos = await _pb.collection('photos').getFullList(filter: filter);
     final result = photos.map((photo) {
       return {
         'id': photo.id,
@@ -157,7 +162,14 @@ class AppStateController extends GetxController {
     return result;
   }
 
-  Future<void> removePhoto(String id) async {
-    await _pb.collection('photos').delete(id);
+  Future<void> removePhoto(String albumID, String photoID) async {
+    await _pb.collection('albums').update(albumID, body: {'photos-': photoID});
+    try {
+      await _pb
+          .collection('albums')
+          .getFirstListItem('photos.id ?= "$photoID"');
+    } catch (e) {
+      await _pb.collection('photos').delete(photoID);
+    }
   }
 }
