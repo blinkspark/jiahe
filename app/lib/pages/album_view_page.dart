@@ -216,7 +216,7 @@ class AlbumViewPage extends StatelessWidget {
 
       if (confirm == true) {
         // 执行删除操作
-        await appState.removePhoto(
+        await appState.deletePhotoFromAlbum(
           Get.parameters['id']!,
           photo['id'].toString(),
         );

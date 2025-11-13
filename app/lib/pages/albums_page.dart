@@ -265,6 +265,7 @@ class AlbumsPage extends StatelessWidget {
       try {
         // 这里应该调用删除相册的API
         logger.d('删除相册: ${album.get<String>('id')}');
+        await appState.deleteAlbum(album.get<String>('id'));
         Get.snackbar('成功', '相册已删除');
         await fetchAlbums(); // 刷新列表
       } catch (e) {
