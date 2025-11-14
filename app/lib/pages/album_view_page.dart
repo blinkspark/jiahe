@@ -119,15 +119,15 @@ class AlbumViewPage extends StatelessWidget {
                     _showPhotoDetails(context, index);
                   },
                 ),
-                _buildMenuItem(
-                  context: context,
-                  icon: Icons.edit_outlined,
-                  title: '编辑照片',
-                  onTap: () async {
-                    Get.back();
-                    await _editPhoto(index);
-                  },
-                ),
+                // _buildMenuItem(
+                //   context: context,
+                //   icon: Icons.edit_outlined,
+                //   title: '编辑照片',
+                //   onTap: () async {
+                //     Get.back();
+                //     await _editPhoto(index);
+                //   },
+                // ),
 
                 // 取消按钮
                 Padding(
@@ -312,16 +312,16 @@ class AlbumViewPage extends StatelessWidget {
     );
   }
 
-  Future<void> _editPhoto(int index) async {
-    try {
-      // 这里应该实现编辑功能
-      logger.d('编辑照片: ${photos[index]['id']}');
-      Get.snackbar('提示', '编辑功能开发中');
-    } catch (e) {
-      logger.e(e);
-      Get.snackbar('错误', '编辑照片失败');
-    }
-  }
+  // Future<void> _editPhoto(int index) async {
+  //   try {
+  //     // 这里应该实现编辑功能
+  //     logger.d('编辑照片: ${photos[index]['id']}');
+  //     Get.snackbar('提示', '编辑功能开发中');
+  //   } catch (e) {
+  //     logger.e(e);
+  //     Get.snackbar('错误', '编辑照片失败');
+  //   }
+  // }
 
   String _formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';

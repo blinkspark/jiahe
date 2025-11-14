@@ -20,20 +20,18 @@ class PhotoViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.d('index: $index');
     return Obx(
       () => Scaffold(
         appBar: AppBar(title: Text(name.value)),
         body: PhotoViewGallery.builder(
           scrollPhysics: const BouncingScrollPhysics(),
           itemCount: photos.length,
-          onPageChanged: (index) => logger.d('onPageChanged: $index'),
           pageController: pageController,
           builder: (context, index) => PhotoViewGalleryPageOptions(
             imageProvider: NetworkImage(photos[index]['url'].toString()),
-            gestureDetectorBehavior: HitTestBehavior.opaque,
+            filterQuality: FilterQuality.medium,
             heroAttributes: PhotoViewHeroAttributes(
-              tag: photos[index]['url'].toString(),
+              tag: photos[index]['id'].toString(),
             ),
           ),
         ),

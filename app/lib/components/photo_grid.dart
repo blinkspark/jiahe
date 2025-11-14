@@ -19,8 +19,8 @@ class PhotoGrid extends StatelessWidget {
     this.onLongPress,
     this.logger,
     this.maxCrossAxisExtent = 200,
-    this.crossAxisSpacing = 10,
-    this.mainAxisSpacing = 10,
+    this.crossAxisSpacing = 0,
+    this.mainAxisSpacing = 0,
     this.childAspectRatio = 1,
   });
 
