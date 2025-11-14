@@ -40,11 +40,9 @@ class PhotoGrid extends StatelessWidget {
           return Card(
             child: InkWell(
               onTap: () {
-                logger?.d('tap photo at index $index');
                 onTap?.call(index);
               },
               onLongPress: () {
-                logger?.d('long press photo at index $index');
                 onLongPress?.call(index);
               },
               child: Image.network(
