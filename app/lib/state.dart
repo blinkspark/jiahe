@@ -198,15 +198,27 @@ class AppStateController extends GetxController {
           .collection('users')
           .getFullList(
             filter: "name ~ '$query' && id != '${getUserID()}'",
-            fields: 'id,name,email',
+            fields: 'id,name',
           );
-      return res.map((user) {
+      return res.map((user) async {
+        var isFollowed = false;
+        try {
+          await _pb
+              .collection('follows')
+              .getFullList(
+                filter:
+                    "from = '${getUserID()}' && to = '${user.get<String>('id')}'",
+              );
+          isFollowed = true;
+        } catch (e) {
+          logger.d('未关注');
+        }
         return {
           "id": user.get<String>('id'),
           "name": user.get<String>('name'),
-          "email": user.get<String>('email'),
+          "isFollowed": isFollowed,
         };
-      }).toList();
+      }).wait;
     } catch (e) {
       logger.e('搜索用户失败: $e');
       return [];

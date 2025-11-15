@@ -109,6 +109,8 @@ class AddFriendDialog extends StatelessWidget {
                   itemCount: searchResults.length,
                   itemBuilder: (context, index) {
                     final user = searchResults[index];
+                    final isFollowed = user['isFollowed'] as bool;
+                    logger.d(user);
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 4.0),
                       child: ListTile(
@@ -116,10 +118,14 @@ class AddFriendDialog extends StatelessWidget {
                           child: Text(user['name'][0].toString().toUpperCase()),
                         ),
                         title: Text(user['name']),
-                        subtitle: Text(user['email']),
+                        // subtitle: Text(user['email']),
                         trailing: ElevatedButton(
-                          onPressed: () => addFriend(user['id'], user['name']),
-                          child: const Text('关注'),
+                          onPressed: isFollowed
+                              ? null
+                              : () => addFriend(user['id'], user['name']),
+                          child: user['isFollowed'] as bool
+                              ? const Text('已关注')
+                              : const Text('关注'),
                         ),
                       ),
                     );
@@ -131,10 +137,7 @@ class AddFriendDialog extends StatelessWidget {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Get.back(),
-          child: const Text('取消'),
-        ),
+        TextButton(onPressed: () => Get.back(), child: const Text('取消')),
       ],
     );
   }
