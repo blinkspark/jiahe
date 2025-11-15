@@ -217,11 +217,22 @@ class AppStateController extends GetxController {
     final res = await _pb
         .collection('follows')
         .getFullList(filter: "from.id = '${getUserID()!}'", expand: 'to');
-    logger.d(res);
     return res.map((rec) {
       return {
         "id": rec.get<String>('id'),
         "name": rec.get<String>('expand.to.name'),
+      };
+    }).toList();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchFollowers() async {
+    final res = await _pb
+        .collection('follows')
+        .getFullList(filter: "to.id = '${getUserID()!}'", expand: 'from');
+    return res.map((rec) {
+      return {
+        "id": rec.get<String>('id'),
+        "name": rec.get<String>('expand.from.name'),
       };
     }).toList();
   }
