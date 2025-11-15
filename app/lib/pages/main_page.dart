@@ -27,6 +27,12 @@ class MainPage extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
+                  Get.toNamed('/follows');
+                },
+                child: Text('关注'),
+              ),
+              ElevatedButton(
+                onPressed: () {
                   Get.toNamed('/albums');
                 },
                 child: Text('相册'),

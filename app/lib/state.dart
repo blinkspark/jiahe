@@ -60,6 +60,10 @@ class AppStateController extends GetxController {
         );
   }
 
+  String? getUserID() {
+    return _pb.authStore.record?.id;
+  }
+
   Future<void> createAlbum(String name) async {
     var id = _pb.authStore.record!.id;
     await _pb.collection('albums').create(body: {'name': name, 'owner': id});
@@ -154,9 +158,6 @@ class AppStateController extends GetxController {
   }
 
   Future<List<Map<String, Object>>> fetchAlbumPhotos(String id) async {
-    final filter = 'albums.id ?= "$id"';
-    logger.d('filter: $filter');
-
     final testAlbum = await _pb
         .collection('albums')
         .getOne(id, expand: "photos");
@@ -189,5 +190,53 @@ class AppStateController extends GetxController {
       // TODO: 删除图片变成delay 30天 删除
       await _pb.collection('photos').delete(photoID);
     }
+  }
+
+  Future<List<Map<String, dynamic>>> searchUsers(String query) async {
+    try {
+      final res = await _pb
+          .collection('users')
+          .getFullList(
+            filter: "name ~ '$query' && id != '${getUserID()}'",
+            fields: 'id,name,email',
+          );
+      return res.map((user) {
+        return {
+          "id": user.get<String>('id'),
+          "name": user.get<String>('name'),
+          "email": user.get<String>('email'),
+        };
+      }).toList();
+    } catch (e) {
+      logger.e('搜索用户失败: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchFollows() async {
+    final res = await _pb
+        .collection('follows')
+        .getFullList(filter: "from.id = '${getUserID()!}'", expand: 'to');
+    logger.d(res);
+    return res.map((rec) {
+      return {
+        "id": rec.get<String>('id'),
+        "name": rec.get<String>('expand.to.name'),
+      };
+    }).toList();
+  }
+
+  Future<void> addFollow(String id) async {
+    await _pb
+        .collection('follows')
+        .create(body: {'from': getUserID(), 'to': id});
+  }
+
+  Future<void> deleteFollow(String id) async {
+    // final rec = await _pb
+    //     .collection('follows')
+    //     .getFirstListItem("from.id = '${getUserID()}' and to.id = '$id'");
+    // await _pb.collection('follows').delete(rec.id);
+    await _pb.collection('follows').delete(id);
   }
 }

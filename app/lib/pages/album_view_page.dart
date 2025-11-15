@@ -334,13 +334,12 @@ class AlbumViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.d(Get.parameters);
     final albumId = Get.parameters['id'];
     final name = Get.parameters['name'];
     getPhotos(albumId!);
     return Scaffold(
       appBar: AppBar(
-        title: Text(name!),
+        title: Text(name ?? ''),
         centerTitle: true,
         actions: [
           IconButton(

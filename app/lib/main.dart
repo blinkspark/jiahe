@@ -1,5 +1,6 @@
 import 'package:app/pages/album_view_page.dart';
 import 'package:app/pages/albums_page.dart';
+import 'package:app/pages/follows_page.dart';
 import 'package:app/pages/login_page.dart';
 import 'package:app/pages/main_page.dart';
 import 'package:app/state.dart';
@@ -42,7 +43,7 @@ class MainApp extends StatelessWidget {
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/albums', page: () => AlbumsPage()),
         GetPage(name: '/album/:id', page: () => AlbumViewPage()),
-
+        GetPage(name: '/follows', page: () => FollowsPage()),
       ],
     );
   }
