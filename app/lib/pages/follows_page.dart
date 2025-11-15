@@ -117,31 +117,21 @@ class _FollowsList extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.people_outline,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
+                  Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
                     emptyText,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 16),
                   ),
                   const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: onRefresh,
-                    child: const Text('刷新'),
-                  ),
+                  TextButton(onPressed: onRefresh, child: const Text('刷新')),
                 ],
               ),
             ),
           );
         }
       }
-      
+
       return RefreshIndicator(
         onRefresh: onRefresh,
         child: ListView.builder(
@@ -149,10 +139,7 @@ class _FollowsList extends StatelessWidget {
           itemCount: users.length,
           itemBuilder: (context, index) {
             final user = users[index];
-            return _UserCard(
-              user: user,
-              onRefresh: onRefresh,
-            );
+            return _UserCard(user: user, onRefresh: onRefresh);
           },
         ),
       );
@@ -164,10 +151,7 @@ class _UserCard extends StatelessWidget {
   final Map<String, dynamic> user;
   final Future<void> Function() onRefresh;
 
-  const _UserCard({
-    required this.user,
-    required this.onRefresh,
-  });
+  const _UserCard({required this.user, required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -189,16 +173,11 @@ class _UserCard extends StatelessWidget {
         ),
         title: Text(
           user['name'] ?? '未知用户',
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
           user['email'] ?? '',
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.grey[600], fontSize: 12),
         ),
         trailing: PopupMenuButton<String>(
           onSelected: (value) async {
@@ -206,14 +185,10 @@ class _UserCard extends StatelessWidget {
               try {
                 await appState.deleteFollow(user['id']);
                 await onRefresh();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('已取消关注')),
-                );
+                Get.snackbar('取消关注', '已取消关注');
               } catch (e) {
                 logger.e('取消关注失败: $e');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('操作失败: $e')),
-                );
+                Get.snackbar('错误', '取消关注失败');
               }
             }
           },
