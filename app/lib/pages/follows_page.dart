@@ -35,6 +35,7 @@ class FollowsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     fetchFollows();
+    fetchFollowers();
     return DefaultTabController(
       length: 2,
       child: Scaffold(
