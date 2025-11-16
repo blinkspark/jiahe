@@ -215,7 +215,10 @@ class AlbumsPage extends StatelessWidget {
 
     if (confirm == true && controller.text.trim().isNotEmpty) {
       try {
-        await appState.renameAlbum(album.get<String>('id'), controller.text.trim());
+        await appState.renameAlbum(
+          album.get<String>('id'),
+          controller.text.trim(),
+        );
         Get.snackbar('成功', '相册已重命名');
         await fetchAlbums(); // 刷新列表
       } catch (e) {
@@ -346,8 +349,11 @@ class AlbumsPage extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
-              Get.dialog(CreateAlbumDialog());
+            onPressed: () async {
+              final created = await Get.dialog<bool>(CreateAlbumDialog());
+              if (created == true) {
+                await fetchAlbums(); // 刷新列表
+              }
             },
             icon: Icon(Icons.add),
           ),

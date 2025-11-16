@@ -107,7 +107,6 @@ class AppStateController extends GetxController {
       final fd = File(file.path!);
       final fstream = fd.openRead();
       final hash = await sha512.bind(fstream).first;
-      logger.d('hash: $hash');
 
       final f = http.MultipartFile(
         'content',

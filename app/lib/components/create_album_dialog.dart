@@ -36,7 +36,10 @@ class CreateAlbumDialog extends StatelessWidget {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Get.back(), child: const Text('取消')),
+        TextButton(
+          onPressed: () => Get.back(result: false),
+          child: const Text('取消'),
+        ),
         ElevatedButton(
           onPressed: () async {
             try {
@@ -46,10 +49,10 @@ class CreateAlbumDialog extends StatelessWidget {
                 return;
               }
               await appState.createAlbum(nameController.text);
-              Get.back();
+              Get.back(result: true);
               Get.snackbar('成功', '相册创建成功');
             } catch (e) {
-              Get.back();
+              Get.back(result: false);
               Get.snackbar('失败', '相册创建失败');
               logger.e(e);
             }
