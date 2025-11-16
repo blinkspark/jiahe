@@ -384,9 +384,9 @@ class AlbumViewPage extends StatelessWidget {
                   width: double.infinity,
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.shade200),
+                    border: Border.all(color: Theme.of(context).colorScheme.primary),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,7 +400,7 @@ class AlbumViewPage extends StatelessWidget {
                               strokeWidth: 2,
                               value: appState.uploadProgress.value,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.blue,
+                                Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ),
@@ -419,8 +419,8 @@ class AlbumViewPage extends StatelessWidget {
                       SizedBox(height: 8),
                       LinearProgressIndicator(
                         value: appState.uploadProgress.value,
-                        backgroundColor: Colors.blue.shade100,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                        valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                       ),
                       if (appState.uploadingFiles.isNotEmpty) ...[
                         SizedBox(height: 8),
@@ -428,7 +428,7 @@ class AlbumViewPage extends StatelessWidget {
                           '队列中的文件: ${appState.uploadingFiles.join(", ")}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
