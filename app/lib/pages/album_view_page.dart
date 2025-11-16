@@ -336,6 +336,7 @@ class AlbumViewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final albumId = Get.parameters['id'];
     final name = Get.parameters['name'];
+    final theme = Theme.of(context);
     getPhotos(albumId!);
     return Scaffold(
       appBar: AppBar(
@@ -384,9 +385,9 @@ class AlbumViewPage extends StatelessWidget {
                   width: double.infinity,
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
+                    color: theme.colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Theme.of(context).colorScheme.primary),
+                    border: Border.all(color: theme.colorScheme.primary),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,7 +401,7 @@ class AlbumViewPage extends StatelessWidget {
                               strokeWidth: 2,
                               value: appState.uploadProgress.value,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                Theme.of(context).colorScheme.primary,
+                                theme.colorScheme.primary,
                               ),
                             ),
                           ),
@@ -419,8 +420,12 @@ class AlbumViewPage extends StatelessWidget {
                       SizedBox(height: 8),
                       LinearProgressIndicator(
                         value: appState.uploadProgress.value,
-                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                        valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          theme.colorScheme.primary,
+                        ),
                       ),
                       if (appState.uploadingFiles.isNotEmpty) ...[
                         SizedBox(height: 8),
@@ -428,7 +433,9 @@ class AlbumViewPage extends StatelessWidget {
                           '队列中的文件: ${appState.uploadingFiles.join(", ")}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
