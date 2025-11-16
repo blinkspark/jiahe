@@ -36,6 +36,7 @@ class FollowsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     fetchFollows();
     fetchFollowers();
+    final theme = Theme.of(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -50,10 +51,10 @@ class FollowsPage extends StatelessWidget {
               icon: const Icon(Icons.add),
             ),
           ],
-          bottom: const TabBar(
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
+          bottom: TabBar(
+            indicatorColor: theme.colorScheme.onPrimary,
+            labelColor: theme.colorScheme.onPrimaryContainer,
+            unselectedLabelColor: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.5),
             tabs: [
               Tab(text: '我关注的'),
               Tab(text: '关注我的'),
@@ -108,6 +109,7 @@ class _FollowsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      final theme = Theme.of(context);
       if (users.isEmpty) {
         // 首次加载时显示加载状态
         if (users.runtimeType.toString().contains('RxList')) {
@@ -117,11 +119,11 @@ class _FollowsList extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
+                  Icon(Icons.people_outline, size: 64, color: theme.colorScheme.outline),
                   const SizedBox(height: 16),
                   Text(
                     emptyText,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                    style: TextStyle(color: theme.colorScheme.outline, fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                   TextButton(onPressed: onRefresh, child: const Text('刷新')),
@@ -157,16 +159,17 @@ class _UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppStateController appState = Get.find();
     final Logger logger = Get.find();
+    final theme = Theme.of(context);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.blue[100],
+          backgroundColor: theme.colorScheme.primaryContainer,
           child: Text(
             user['name']?.substring(0, 1).toUpperCase() ?? 'U',
-            style: const TextStyle(
-              color: Colors.blue,
+            style: TextStyle(
+              color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -177,7 +180,7 @@ class _UserCard extends StatelessWidget {
         ),
         subtitle: Text(
           user['email'] ?? '',
-          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+          style: TextStyle(color: theme.colorScheme.outline, fontSize: 12),
         ),
         trailing: PopupMenuButton<String>(
           onSelected: (value) async {
@@ -193,11 +196,11 @@ class _UserCard extends StatelessWidget {
             }
           },
           itemBuilder: (context) => [
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'unfollow',
               child: Row(
                 children: [
-                  Icon(Icons.person_remove, size: 16),
+                  Icon(Icons.person_remove, size: 16, color: theme.iconTheme.color),
                   SizedBox(width: 8),
                   Text('取消关注'),
                 ],
