@@ -49,11 +49,12 @@ class PhotoGrid extends StatelessWidget {
                 url!.toString(),
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return const Center(
+                  final theme = Theme.of(context);
+                  return Center(
                     child: Icon(
                       Icons.broken_image,
                       size: 50,
-                      color: Colors.grey,
+                      color: theme.colorScheme.outline,
                     ),
                   );
                 },
