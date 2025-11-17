@@ -273,12 +273,7 @@ class AppStateController extends GetxController {
     }
   }
 
-  Future<void> shareAlbum(
-    String albumID,
-    String userID,
-    bool isReader,
-    bool isWriter,
-  ) async {
+  Future<void> shareAlbum(String albumID, String userID, bool isWriter) async {
     RecordModel? ap;
     try {
       ap = await _pb
@@ -291,7 +286,7 @@ class AppStateController extends GetxController {
           .create(
             body: {
               'album': albumID,
-              'readers': isReader ? [userID] : [],
+              'readers': [userID],
               'writers': isWriter ? [userID] : [],
             },
           );
@@ -302,7 +297,7 @@ class AppStateController extends GetxController {
         .update(
           ap.get<String>('id'),
           body: {
-            'readers+': isReader ? [userID] : [],
+            'readers+': [userID],
             'writers+': isWriter ? [userID] : [],
           },
         );
