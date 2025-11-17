@@ -241,6 +241,7 @@ class AppStateController extends GetxController {
     return res.map((rec) {
       return {
         "id": rec.get<String>('id'),
+        "from": rec.get<String>('expand.from.id'),
         "name": rec.get<String>('expand.from.name'),
       };
     }).toList();
@@ -260,20 +261,25 @@ class AppStateController extends GetxController {
     await _pb.collection('follows').delete(id);
   }
 
-  Future<bool> isShared(String albumID) async {
+  Future<bool> isShared(String albumID, String userID) async {
     try {
+      logger.d(
+        'album.id = "$albumID" && (readers.id ?= "$userID" || writers.id ?= "$userID")',
+      );
       await _pb
           .collection('almub_permissions')
           .getFirstListItem(
-            'album.id = "$albumID" && (readers.id ?= "${getUserID()}" || writers.id ?= "${getUserID()}")',
+            'album.id = "$albumID" && (readers.id ?= "$userID" || writers.id ?= "$userID")',
           );
       return true;
     } catch (e) {
+      logger.d('here $e');
       return false;
     }
   }
 
   Future<void> shareAlbum(String albumID, String userID, bool isWriter) async {
+    logger.d('shareAlbum $albumID $userID $isWriter');
     RecordModel? ap;
     try {
       ap = await _pb
@@ -299,6 +305,21 @@ class AppStateController extends GetxController {
           body: {
             'readers+': [userID],
             'writers+': isWriter ? [userID] : [],
+          },
+        );
+  }
+
+  Future<void> unshareAlbum(String albumID, String userID) async {
+    final ap = await _pb
+        .collection('almub_permissions')
+        .getFirstListItem("album.id = '$albumID'");
+    await _pb
+        .collection('almub_permissions')
+        .update(
+          ap.get<String>('id'),
+          body: {
+            'readers-': [userID],
+            'writers-': [userID],
           },
         );
   }

@@ -17,7 +17,7 @@ class ShareAlmubPage extends StatelessWidget {
     fetchFollowers(albumID);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Share Almub")),
+      appBar: AppBar(title: const Text("分享相册"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Obx(
@@ -33,15 +33,29 @@ class ShareAlmubPage extends StatelessWidget {
                   ),
                   child: ListTile(
                     title: Text(follower['name']),
-                    trailing: ElevatedButton(
-                      onPressed: follower['isShared']
-                          ? null
-                          : () async {
-                              logger.d("TODO: Share with ${follower['name']}");
-                              await Get.dialog(ShareAlmubDialog());
+                    trailing: follower['isShared']
+                        ? ElevatedButton(
+                            onPressed: () async {
+                              await appState.unshareAlbum(
+                                albumID,
+                                follower['from'],
+                              );
+                              await fetchFollowers(albumID);
                             },
-                      child: Text('分享'),
-                    ),
+                            child: Text('取消分享'),
+                          )
+                        : ElevatedButton(
+                            onPressed: () async {
+                              await Get.dialog(
+                                ShareAlmubDialog(
+                                  albumID: albumID,
+                                  followerID: follower['from'],
+                                ),
+                              );
+                              await fetchFollowers(albumID);
+                            },
+                            child: Text('分享'),
+                          ),
                   ),
                 ),
               );
@@ -57,7 +71,7 @@ class ShareAlmubPage extends StatelessWidget {
       final flrs = await appState.fetchFollowers();
       followers.value = await flrs.map((e) async {
         logger.d('e: $e');
-        final isShared = await appState.isShared(e['id']);
+        final isShared = await appState.isShared(albumID, e['from']);
         logger.d('isShared: $isShared');
         return {...e, 'isShared': isShared};
       }).wait;
@@ -69,10 +83,41 @@ class ShareAlmubPage extends StatelessWidget {
 }
 
 class ShareAlmubDialog extends StatelessWidget {
-  const ShareAlmubDialog({super.key});
+  final String albumID;
+  final String followerID;
+  ShareAlmubDialog({
+    super.key,
+    required this.albumID,
+    required this.followerID,
+  });
+  final isWrite = false.obs;
 
   @override
   Widget build(BuildContext context) {
-    return const Text("TODO: Share Almub Dialog");
+    return AlertDialog(
+      title: const Text('分享'),
+      content: Row(
+        children: [
+          const Text('赋予写权限'),
+          Obx(
+            () => Switch(
+              value: isWrite.value,
+              onChanged: (v) => isWrite.value = v,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: () => Get.back(), child: const Text('取消')),
+        TextButton(
+          onPressed: () async {
+            final AppStateController appState = Get.find();
+            await appState.shareAlbum(albumID, followerID, isWrite.value);
+            Get.back();
+          },
+          child: const Text('确定'),
+        ),
+      ],
+    );
   }
 }
