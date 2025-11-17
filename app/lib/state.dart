@@ -97,8 +97,6 @@ class AppStateController extends GetxController {
     uploadStatus.value = '准备上传: ${file.name}';
 
     try {
-      logger.d(file);
-
       // 更新上传状态
       uploadProgress.value = 0.2;
       uploadStatus.value = '读取文件: ${file.name}';

@@ -354,6 +354,8 @@ class AlbumViewPage extends StatelessWidget {
               var res = await FilePicker.platform.pickFiles(
                 withReadStream: true,
                 allowMultiple: true,
+                type: FileType.custom,
+                allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
               );
 
               if (res != null && res.files.isNotEmpty) {
