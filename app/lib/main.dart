@@ -3,6 +3,7 @@ import 'package:app/pages/albums_page.dart';
 import 'package:app/pages/follows_page.dart';
 import 'package:app/pages/login_page.dart';
 import 'package:app/pages/main_page.dart';
+import 'package:app/pages/share_almub_page.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -44,6 +45,7 @@ class MainApp extends StatelessWidget {
         GetPage(name: '/albums', page: () => AlbumsPage()),
         GetPage(name: '/album/:id', page: () => AlbumViewPage()),
         GetPage(name: '/follows', page: () => FollowsPage()),
+        GetPage(name: '/share_album', page: () => ShareAlmubPage()),
       ],
     );
   }

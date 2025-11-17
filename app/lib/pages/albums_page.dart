@@ -278,9 +278,7 @@ class AlbumsPage extends StatelessWidget {
   Future<void> _shareAlbum(int index) async {
     try {
       final album = albums[index];
-      // TODO: 这里应该实现分享功能
-      logger.d('分享相册: ${album.get<String>('id')}');
-      Get.snackbar('提示', '分享功能开发中');
+      Get.toNamed('/share_album', parameters: {'id': album.id});
     } catch (e) {
       logger.e(e);
       Get.snackbar('错误', '分享相册失败');

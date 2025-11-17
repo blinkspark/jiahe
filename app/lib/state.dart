@@ -259,4 +259,52 @@ class AppStateController extends GetxController {
     // await _pb.collection('follows').delete(rec.id);
     await _pb.collection('follows').delete(id);
   }
+
+  Future<bool> isShared(String albumID) async {
+    try {
+      await _pb
+          .collection('almub_permissions')
+          .getFirstListItem(
+            'album.id = "$albumID" && (readers.id ?= "${getUserID()}" || writers.id ?= "${getUserID()}")',
+          );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> shareAlbum(
+    String albumID,
+    String userID,
+    bool isReader,
+    bool isWriter,
+  ) async {
+    RecordModel? ap;
+    try {
+      ap = await _pb
+          .collection('almub_permissions')
+          .getFirstListItem("album.id = '$albumID'");
+    } catch (e) {
+      logger.d('创建权限');
+      await _pb
+          .collection('almub_permissions')
+          .create(
+            body: {
+              'album': albumID,
+              'readers': isReader ? [userID] : [],
+              'writers': isWriter ? [userID] : [],
+            },
+          );
+      return;
+    }
+    await _pb
+        .collection('almub_permissions')
+        .update(
+          ap.get<String>('id'),
+          body: {
+            'readers+': isReader ? [userID] : [],
+            'writers+': isWriter ? [userID] : [],
+          },
+        );
+  }
 }
