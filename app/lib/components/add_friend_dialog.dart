@@ -123,7 +123,7 @@ class AddFriendDialog extends StatelessWidget {
                           onPressed: isFollowed
                               ? null
                               : () => addFriend(user['id'], user['name']),
-                          child: user['isFollowed'] as bool
+                          child: isFollowed
                               ? const Text('已关注')
                               : const Text('关注'),
                         ),

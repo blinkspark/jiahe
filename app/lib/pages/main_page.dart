@@ -50,8 +50,28 @@ class MainPage extends StatelessWidget {
                 child: Text('暗主题'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  appState.logout();
+                onPressed: () async {
+                  final res = await Get.dialog<bool>(
+                    AlertDialog(
+                      title: Text('提示'),
+                      content: Text('确定要注销吗？'),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.back(result: false);
+                          },
+                          child: Text('取消'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.back(result: true);
+                          },
+                          child: Text('确定'),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (res!) appState.logout();
                 },
                 child: Text('注销'),
               ),
