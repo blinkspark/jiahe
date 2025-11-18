@@ -10,6 +10,7 @@ import 'package:crypto/crypto.dart';
 
 class AppStateController extends GetxController {
   final isLogin = false.obs;
+  final username = ''.obs;
   final _box = GetStorage();
   late final AsyncAuthStore _authStore;
   late final PocketBase _pb;
@@ -33,6 +34,7 @@ class AppStateController extends GetxController {
     isLogin.value = _pb.authStore.isValid;
     _pb.authStore.onChange.listen((data) {
       isLogin.value = _pb.authStore.isValid;
+      username.value = _pb.authStore.record?.getStringValue('name') ?? '';
     });
   }
 
@@ -62,6 +64,10 @@ class AppStateController extends GetxController {
 
   String? getUserID() {
     return _pb.authStore.record?.id;
+  }
+
+  String? getUserName() {
+    return _pb.authStore.record?.getStringValue('name');
   }
 
   Future<void> createAlbum(String name) async {
