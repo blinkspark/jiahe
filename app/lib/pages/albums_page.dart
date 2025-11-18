@@ -381,7 +381,11 @@ class AlbumsPage extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       Get.toNamed(
-                        '/album/${album.get<String>('id')}?name=${album.get<String>('name')}',
+                        '/album',
+                        parameters: {
+                          'id': album.get<String>('id'),
+                          'name': album.get<String>('name'),
+                        },
                       );
                     },
                     onLongPress: () {

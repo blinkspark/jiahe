@@ -15,7 +15,7 @@ function start_frontend() {
 }
 
 # 解析命令行参数
-while getopts "fda" opt; do
+while getopts "fd" opt; do
   case $opt in
     f)
       start_frontend

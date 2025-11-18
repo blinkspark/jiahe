@@ -43,7 +43,7 @@ class MainApp extends StatelessWidget {
         GetPage(name: '/', page: () => MainPage()),
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/albums', page: () => AlbumsPage()),
-        GetPage(name: '/album/:id', page: () => AlbumViewPage()),
+        GetPage(name: '/album', page: () => AlbumViewPage()),
         GetPage(name: '/follows', page: () => FollowsPage()),
         GetPage(name: '/share_album', page: () => ShareAlmubPage()),
       ],
