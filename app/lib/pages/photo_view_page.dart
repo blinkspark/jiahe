@@ -7,7 +7,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 class PhotoViewPage extends StatefulWidget {
-  final RxList<Map<String, Object>> photos;
+  final RxList<Map<String, dynamic>> photos;
   late final PageController pageController;
   final int index;
 

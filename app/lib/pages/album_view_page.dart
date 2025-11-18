@@ -12,7 +12,7 @@ import 'package:logger/logger.dart';
 class AlbumViewPage extends StatelessWidget {
   final AppStateController appState = Get.find();
   final Logger logger = Get.find();
-  final photos = <Map<String, Object>>[].obs;
+  final photos = <Map<String, dynamic>>[].obs;
   AlbumViewPage({super.key});
 
   Future<void> getPhotos(String albumId) async {
@@ -218,7 +218,7 @@ class AlbumViewPage extends StatelessWidget {
         // 执行删除操作
         await appState.deletePhotoFromAlbum(
           Get.parameters['id']!,
-          photo['id'].toString(),
+          photo['id'],
         );
         await getPhotos(Get.parameters['id']!);
         Get.snackbar('成功', '照片已删除');

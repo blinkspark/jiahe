@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class PhotoGrid extends StatelessWidget {
-  final RxList<Map<String, Object>> photos;
+  final RxList<Map<String, dynamic>> photos;
   final Function(int index)? onTap;
   final Function(int index)? onLongPress;
   final Logger? logger;

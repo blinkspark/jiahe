@@ -154,7 +154,7 @@ class AppStateController extends GetxController {
     }
   }
 
-  Future<List<Map<String, Object>>> fetchAlbumPhotos(String id) async {
+  Future<List<Map<String, dynamic>>> fetchAlbumPhotos(String id) async {
     final testAlbum = await _pb
         .collection('albums')
         .getOne(id, expand: "photos");
@@ -178,6 +178,7 @@ class AppStateController extends GetxController {
   }
 
   Future<void> deletePhotoFromAlbum(String albumID, String photoID) async {
+    logger.d('删除图片: $photoID from album: $albumID');
     await _pb.collection('albums').update(albumID, body: {'photos-': photoID});
     try {
       await _pb
