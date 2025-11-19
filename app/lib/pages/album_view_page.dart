@@ -5,6 +5,7 @@ import 'package:app/state.dart';
 import 'package:app/components/photo_grid.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -216,10 +217,7 @@ class AlbumViewPage extends StatelessWidget {
 
       if (confirm == true) {
         // 执行删除操作
-        await appState.deletePhotoFromAlbum(
-          Get.parameters['id']!,
-          photo['id'],
-        );
+        await appState.deletePhotoFromAlbum(Get.parameters['id']!, photo['id']);
         await getPhotos(Get.parameters['id']!);
         Get.snackbar('成功', '照片已删除');
       }
@@ -242,8 +240,23 @@ class AlbumViewPage extends StatelessWidget {
 
   Future<void> _savePhotoLocally(int index) async {
     try {
-      // 这里应该实现保存到本地的功能
-      logger.d('保存照片到本地: ${photos[index]['id']}');
+      if (kIsWeb) {
+        try {
+          final bytes = await Dio().get(
+            photos[index]['url'].toString(),
+            options: Options(responseType: ResponseType.bytes),
+          );
+          await FilePicker.platform.saveFile(
+            fileName: photos[index]['name'],
+            bytes: bytes.data,
+          );
+        } on Exception catch (e) {
+          logger.e(e);
+          Get.snackbar('错误', '保存照片失败');
+          return;
+        }
+        return;
+      }
       final path = await FilePicker.platform.getDirectoryPath();
       if (path != null) {
         final file = File('$path/${photos[index]['name']}');

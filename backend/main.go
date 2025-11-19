@@ -33,6 +33,10 @@ func main() {
 	})
 
 	app.OnRecordCreate("photos").BindFunc(func(e *core.RecordEvent) error {
+		h := e.Record.GetString("hash")
+		if h != "" {
+			return e.Next()
+		}
 		files := e.Record.GetUnsavedFiles("content")
 		for _, file := range files {
 			reader, err := file.Reader.Open()

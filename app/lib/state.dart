@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -95,6 +96,7 @@ class AppStateController extends GetxController {
   }
 
   Future<void> createPhotoToAlbum(String? albumId, PlatformFile file) async {
+    logger.d('开始上传: ${file.name} to album: $albumId');
     final userID = _pb.authStore.record!.id;
 
     // 开始上传
@@ -109,9 +111,13 @@ class AppStateController extends GetxController {
       uploadStatus.value = '读取文件: ${file.name}';
 
       // 生成文件hash
-      final fd = File(file.path!);
-      final fstream = fd.openRead();
-      final hash = await sha512.bind(fstream).first;
+      Digest? hash;
+      if (!kIsWeb) {
+        final fd = File(file.path!);
+        final fstream = fd.openRead();
+        hash = await sha512.bind(fstream).first;
+      }
+      logger.d('文件hash: $hash');
 
       final f = http.MultipartFile(
         'content',
@@ -131,7 +137,7 @@ class AppStateController extends GetxController {
               'name': file.name,
               'owner': userID,
               'size': file.size,
-              'hash': hash.toString(),
+              'hash': hash?.toString(),
             },
             files: [f],
           );
