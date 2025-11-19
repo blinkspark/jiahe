@@ -32,6 +32,7 @@ class AppStateController extends GetxController {
     );
     _pb = PocketBase(dotenv.get('BASE_URL'), authStore: _authStore);
     isLogin.value = _pb.authStore.isValid;
+    username.value = _pb.authStore.record?.getStringValue('name') ?? '';
     _pb.authStore.onChange.listen((data) {
       isLogin.value = _pb.authStore.isValid;
       username.value = _pb.authStore.record?.getStringValue('name') ?? '';
