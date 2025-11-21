@@ -48,6 +48,17 @@ class PhotoGrid extends StatelessWidget {
               child: Image.network(
                 url!.toString(),
                 fit: BoxFit.cover,
+                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                  if (frame == null) {
+                    return Center(child: CircularProgressIndicator());
+                  } else {
+                    return AnimatedOpacity(
+                      opacity: 1.0,
+                      duration: const Duration(milliseconds: 1300),
+                      child: child,
+                    );
+                  }
+                },
                 errorBuilder: (context, error, stackTrace) {
                   final theme = Theme.of(context);
                   return Center(
