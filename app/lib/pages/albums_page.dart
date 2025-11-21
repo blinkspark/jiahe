@@ -9,7 +9,7 @@ class AlbumsPage extends StatelessWidget {
   final appState = Get.find<AppStateController>();
   final logger = Get.find<Logger>();
   final isFetching = false.obs;
-  final albums = <RecordModel>[].obs;
+  final albums = <Map<String, dynamic>>[].obs;
   AlbumsPage({super.key});
 
   Future<void> fetchAlbums() async {
@@ -72,7 +72,7 @@ class AlbumsPage extends StatelessWidget {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            album.get<String>('name'),
+                            album['name'],
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
@@ -177,7 +177,7 @@ class AlbumsPage extends StatelessWidget {
     final album = albums[index];
     final theme = Theme.of(context);
     final TextEditingController controller = TextEditingController(
-      text: album.get<String>('name'),
+      text: album['name'],
     );
 
     final confirm = await Get.dialog<bool>(
@@ -215,10 +215,7 @@ class AlbumsPage extends StatelessWidget {
 
     if (confirm == true && controller.text.trim().isNotEmpty) {
       try {
-        await appState.renameAlbum(
-          album.get<String>('id'),
-          controller.text.trim(),
-        );
+        await appState.renameAlbum(album['id'], controller.text.trim());
         Get.snackbar('成功', '相册已重命名');
         await fetchAlbums(); // 刷新列表
       } catch (e) {
@@ -240,7 +237,7 @@ class AlbumsPage extends StatelessWidget {
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         content: Text(
-          '确定要删除相册 "${album.get<String>('name')}" 吗？此操作无法撤销。',
+          '确定要删除相册 "${album['name']}" 吗？此操作无法撤销。',
           style: TextStyle(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
           ),
@@ -264,8 +261,8 @@ class AlbumsPage extends StatelessWidget {
     if (confirm == true) {
       try {
         // 这里应该调用删除相册的API
-        logger.d('删除相册: ${album.get<String>('id')}');
-        await appState.deleteAlbum(album.get<String>('id'));
+        logger.d('删除相册: ${album['id']}');
+        await appState.deleteAlbum(album['id']);
         Get.snackbar('成功', '相册已删除');
         await fetchAlbums(); // 刷新列表
       } catch (e) {
@@ -278,7 +275,7 @@ class AlbumsPage extends StatelessWidget {
   Future<void> _shareAlbum(int index) async {
     try {
       final album = albums[index];
-      Get.toNamed('/share_album', parameters: {'id': album.id});
+      Get.toNamed('/share_album', parameters: {'id': album['id']});
     } catch (e) {
       logger.e(e);
       Get.snackbar('错误', '分享相册失败');
@@ -302,22 +299,22 @@ class AlbumsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '相册ID: ${album.get<String>('id')}',
+                '相册ID: ${album['id']}',
                 style: TextStyle(color: theme.colorScheme.onSurface),
               ),
               SizedBox(height: 8),
               Text(
-                '相册名称: ${album.get<String>('name')}',
+                '相册名称: ${album['name']}',
                 style: TextStyle(color: theme.colorScheme.onSurface),
               ),
               SizedBox(height: 8),
               Text(
-                '创建时间: ${album.get<String>('created')}',
+                '创建时间: ${album['created']}',
                 style: TextStyle(color: theme.colorScheme.onSurface),
               ),
               SizedBox(height: 8),
               Text(
-                '更新时间: ${album.get<String>('updated')}',
+                '更新时间: ${album['updated']}',
                 style: TextStyle(color: theme.colorScheme.onSurface),
               ),
             ],
@@ -368,7 +365,7 @@ class AlbumsPage extends StatelessWidget {
                 maxCrossAxisExtent: 200,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: 1,
+                childAspectRatio: 9 / 10,
               ),
               itemCount: albums.length,
               itemBuilder: (context, index) {
@@ -378,21 +375,47 @@ class AlbumsPage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
                   ),
-                  child: InkWell(
-                    onTap: () {
-                      Get.toNamed(
-                        '/album',
-                        parameters: {
-                          'id': album.get<String>('id'),
-                          'name': album.get<String>('name'),
+                  child: Stack(
+                    children: [
+                      LayoutBuilder(
+                        builder: (context, constrains) {
+                          logger.d(album['cover']);
+                          return Column(
+                            children: [
+                              Container(
+                                height: constrains.maxHeight * 0.85,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                  image: DecorationImage(
+                                    image: NetworkImage(album['cover']),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Expanded(child: Center(child: Text(album['name'])))
+                            ],
+                          );
                         },
-                      );
-                    },
-                    onLongPress: () {
-                      _showAlbumMenu(context, index);
-                    },
-                    borderRadius: BorderRadius.circular(10),
-                    child: Center(child: Text(album.get<String>('name'))),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.toNamed(
+                            '/album',
+                            parameters: {
+                              'id': album['id'],
+                              'name': album['name'],
+                            },
+                          );
+                        },
+                        onLongPress: () {
+                          _showAlbumMenu(context, index);
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ],
                   ),
                 );
               },

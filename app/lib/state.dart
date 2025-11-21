@@ -91,8 +91,25 @@ class AppStateController extends GetxController {
     await _pb.collection('albums').delete(id);
   }
 
-  Future<List<RecordModel>> fetchAlbums() async {
-    return await _pb.collection('albums').getFullList();
+  Future<List<Map<String, dynamic>>> fetchAlbums() async {
+    final res = await _pb.collection('albums').getFullList(expand: 'cover');
+    final albums = await res.map((rec) async {
+      logger.d('获取相册: ${rec.get<RecordModel>('expand.cover')}');
+      logger.d('name: ${rec.get<String>('expand.cover.content')}');
+      Map<String, dynamic> r = {
+        'id': rec.id,
+        'name': rec.getStringValue('name'),
+        'created': rec.getStringValue('created'),
+        'updated': rec.getStringValue('updated'),
+        'cover': _pb.files.getURL(
+          rec.get<RecordModel>('expand.cover'),
+          rec.getStringValue('expand.cover.content'),
+          thumb: '200x200',
+        ).toString(),
+      };
+      return r;
+    }).wait;
+    return albums;
   }
 
   Future<void> createPhotoToAlbum(String? albumId, PlatformFile file) async {
