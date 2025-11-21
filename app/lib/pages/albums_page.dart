@@ -1,4 +1,5 @@
 import 'package:app/components/create_album_dialog.dart';
+import 'package:app/components/photo_grid.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -101,7 +102,44 @@ class AlbumsPage extends StatelessWidget {
                   title: '选择封面',
                   onTap: () async {
                     Get.back();
-                    // TODO: 选择封面
+                    final photos = await appState.fetchAlbumPhotos(
+                      album['id'],
+                      thumbSize: '100x100',
+                    );
+                    final res = await Get.dialog<String?>(
+                      AlertDialog(
+                        title: Text('选择封面'),
+                        content: SizedBox(
+                          height: Get.height / 2,
+                          width: Get.width / 2,
+                          child: PhotoGrid(
+                            photos: photos.obs,
+                            maxCrossAxisExtent: 100,
+                            onTap: (index) {
+                              Get.back(result: photos[index]['id']);
+                            },
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            child: Text('取消'),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (res != null) {
+                      try {
+                        await appState.updateAlbumCover(album['id'], res);
+                      } on Exception catch (e) {
+                        logger.e(e);
+                        Get.snackbar('错误', '更新相册封面失败');
+                      }
+                      Get.snackbar('成功', '更新相册封面成功');
+                      fetchAlbums();
+                    }
                   },
                 ),
                 _buildMenuItem(
@@ -404,7 +442,9 @@ class AlbumsPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Expanded(child: Center(child: Text(album['name'])))
+                              Expanded(
+                                child: Center(child: Text(album['name'])),
+                              ),
                             ],
                           ),
                           Positioned.fill(

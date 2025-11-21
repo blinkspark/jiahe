@@ -101,11 +101,13 @@ class AppStateController extends GetxController {
         'name': rec.getStringValue('name'),
         'created': rec.getStringValue('created'),
         'updated': rec.getStringValue('updated'),
-        'cover': _pb.files.getURL(
-          rec.get<RecordModel>('expand.cover'),
-          rec.getStringValue('expand.cover.content'),
-          thumb: '200x200',
-        ).toString(),
+        'cover': _pb.files
+            .getURL(
+              rec.get<RecordModel>('expand.cover'),
+              rec.getStringValue('expand.cover.content'),
+              thumb: '200x200',
+            )
+            .toString(),
       };
       return r;
     }).wait;
@@ -184,7 +186,10 @@ class AppStateController extends GetxController {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchAlbumPhotos(String id) async {
+  Future<List<Map<String, dynamic>>> fetchAlbumPhotos(
+    String id, {
+    String thumbSize = '200x200',
+  }) async {
     final testAlbum = await _pb
         .collection('albums')
         .getOne(id, expand: "photos");
@@ -199,7 +204,7 @@ class AppStateController extends GetxController {
         'preview_url': _pb.files.getURL(
           photo,
           photo.get<String>('content'),
-          thumb: '200x200',
+          thumb: thumbSize,
         ),
         'url': _pb.files.getURL(photo, photo.get<String>('content')),
       };
@@ -353,5 +358,9 @@ class AppStateController extends GetxController {
             'writers-': [userID],
           },
         );
+  }
+
+  Future<void> updateAlbumCover(String album, String res) async {
+    await _pb.collection('albums').update(album, body: {'cover': res});
   }
 }
