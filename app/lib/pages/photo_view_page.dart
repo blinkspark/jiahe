@@ -85,10 +85,22 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
           scrollPhysics: const BouncingScrollPhysics(),
           itemCount: widget.photos.length,
           pageController: widget.pageController,
+          loadingBuilder: (context, event) {
+            return Center(
+              child: SizedBox(
+                width: 20.0,
+                height: 20.0,
+                child: CircularProgressIndicator(
+                  value: event == null
+                      ? 0
+                      : (event.cumulativeBytesLoaded /
+                            event.expectedTotalBytes!),
+                ),
+              ),
+            );
+          },
           builder: (context, index) => PhotoViewGalleryPageOptions(
-            imageProvider: NetworkImage(
-              widget.photos[index]['url'].toString(),
-            ),
+            imageProvider: NetworkImage(widget.photos[index]['url'].toString()),
             controller: getPhotoController(index),
             filterQuality: FilterQuality.medium,
             heroAttributes: PhotoViewHeroAttributes(

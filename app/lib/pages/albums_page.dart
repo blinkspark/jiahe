@@ -438,18 +438,21 @@ class AlbumsPage extends StatelessWidget {
                                   child: Image.network(
                                     album['cover'],
                                     fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                          logger.d(loadingProgress);
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          } else {
-                                            return Center(
-                                              child:
-                                                  CircularProgressIndicator(),
+                                    frameBuilder: (context, child, frame, loaded) {
+                                      logger.d(
+                                        'loaded: $loaded, frame: $frame',
+                                      );
+                                      return frame != null
+                                          ? child
+                                          : Center(
+                                              child: SizedBox(
+                                                width: 20.0,
+                                                height: 20.0,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
                                             );
-                                          }
-                                        },
+                                    },
                                   ),
                                 ),
                               ),
