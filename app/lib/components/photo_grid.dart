@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -36,7 +37,7 @@ class PhotoGrid extends StatelessWidget {
         ),
         itemCount: photos.length,
         itemBuilder: (context, index) {
-          final url = photos[index]['preview_url'] as Uri?;
+          final url = photos[index]['preview_url'] as Uri;
           return Card(
             child: InkWell(
               onTap: () {
@@ -45,30 +46,18 @@ class PhotoGrid extends StatelessWidget {
               onLongPress: () {
                 onLongPress?.call(index);
               },
-              child: Image.network(
-                url!.toString(),
-                fit: BoxFit.cover,
-                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                  if (frame == null) {
-                    return Center(child: CircularProgressIndicator());
-                  } else {
-                    return AnimatedOpacity(
-                      opacity: 1.0,
-                      duration: const Duration(milliseconds: 1300),
-                      child: child,
-                    );
-                  }
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  final theme = Theme.of(context);
-                  return Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      size: 50,
-                      color: theme.colorScheme.outline,
-                    ),
-                  );
-                },
+              child: CachedNetworkImage(
+                imageUrl: url.toString(),
+                fit: BoxFit.fill,
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    size: 50,
+                    color: Get.theme.colorScheme.outline,
+                  ),
+                ),
               ),
             ),
           );

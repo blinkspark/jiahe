@@ -1,6 +1,7 @@
 import 'package:app/components/create_album_dialog.dart';
 import 'package:app/components/photo_grid.dart';
 import 'package:app/state.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -435,24 +436,19 @@ class AlbumsPage extends StatelessWidget {
                                     topLeft: Radius.circular(10),
                                     topRight: Radius.circular(10),
                                   ),
-                                  child: Image.network(
-                                    album['cover'],
+                                  child: CachedNetworkImage(
+                                    imageUrl: album['cover'],
                                     fit: BoxFit.cover,
-                                    frameBuilder: (context, child, frame, loaded) {
-                                      logger.d(
-                                        'loaded: $loaded, frame: $frame',
-                                      );
-                                      return frame != null
-                                          ? child
-                                          : Center(
-                                              child: SizedBox(
-                                                width: 20.0,
-                                                height: 20.0,
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                            );
-                                    },
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Center(
+                                          child: Icon(
+                                            Icons.broken_image,
+                                            size: 50,
+                                          ),
+                                        ),
                                   ),
                                 ),
                               ),

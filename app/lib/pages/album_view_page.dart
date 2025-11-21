@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:app/pages/photo_view_page.dart';
 import 'package:app/state.dart';
 import 'package:app/components/photo_grid.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -62,10 +63,12 @@ class AlbumViewPage extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      photo['preview_url'].toString(),
+                    child: CachedNetworkImage(
+                      imageUrl: photo['preview_url'].toString(),
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) {
                         return Center(
                           child: Icon(
                             Icons.broken_image,
@@ -75,6 +78,19 @@ class AlbumViewPage extends StatelessWidget {
                         );
                       },
                     ),
+                    // Image.network(
+                    //   photo['preview_url'].toString(),
+                    //   fit: BoxFit.cover,
+                    //   errorBuilder: (context, error, stackTrace) {
+                    //     return Center(
+                    //       child: Icon(
+                    //         Icons.broken_image,
+                    //         size: 40,
+                    //         color: Get.theme.colorScheme.onSurface,
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                   ),
                 ),
 

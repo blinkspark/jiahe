@@ -1,4 +1,5 @@
 import 'package:app/state.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +101,9 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
             );
           },
           builder: (context, index) => PhotoViewGalleryPageOptions(
-            imageProvider: NetworkImage(widget.photos[index]['url'].toString()),
+            imageProvider: CachedNetworkImageProvider(
+              widget.photos[index]['url'].toString(),
+            ),
             controller: getPhotoController(index),
             filterQuality: FilterQuality.medium,
             heroAttributes: PhotoViewHeroAttributes(
