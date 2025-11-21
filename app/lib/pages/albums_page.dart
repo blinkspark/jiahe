@@ -97,6 +97,15 @@ class AlbumsPage extends StatelessWidget {
                 ),
                 _buildMenuItem(
                   context: context,
+                  icon: Icons.image_outlined,
+                  title: '选择封面',
+                  onTap: () async {
+                    Get.back();
+                    // TODO: 选择封面
+                  },
+                ),
+                _buildMenuItem(
+                  context: context,
                   icon: Icons.delete_outline,
                   title: '删除相册',
                   onTap: () async {
