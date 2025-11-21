@@ -4,7 +4,6 @@ import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 class AlbumsPage extends StatelessWidget {
   final appState = Get.find<AppStateController>();
