@@ -427,23 +427,38 @@ class AlbumsPage extends StatelessWidget {
                       return Stack(
                         children: [
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Container(
-                                height: constrains.maxHeight * 0.85,
-                                decoration: BoxDecoration(
+                              Expanded(
+                                child: ClipRRect(
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(10),
                                     topRight: Radius.circular(10),
                                   ),
-                                  image: DecorationImage(
-                                    image: NetworkImage(album['cover']),
+                                  child: Image.network(
+                                    album['cover'],
                                     fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                          logger.d(loadingProgress);
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          } else {
+                                            return Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          }
+                                        },
                                   ),
                                 ),
                               ),
-                              Expanded(
+                              // SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: Center(child: Text(album['name'])),
                               ),
+                              // SizedBox(height: 8),
                             ],
                           ),
                           Positioned.fill(
