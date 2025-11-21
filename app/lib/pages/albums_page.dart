@@ -375,12 +375,12 @@ class AlbumsPage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
                   ),
-                  child: Stack(
-                    children: [
-                      LayoutBuilder(
-                        builder: (context, constrains) {
-                          logger.d(album['cover']);
-                          return Column(
+                  child: LayoutBuilder(
+                    builder: (context, constrains) {
+                      logger.d(album['cover']);
+                      return Stack(
+                        children: [
+                          Column(
                             children: [
                               Container(
                                 height: constrains.maxHeight * 0.85,
@@ -397,25 +397,30 @@ class AlbumsPage extends StatelessWidget {
                               ),
                               Expanded(child: Center(child: Text(album['name'])))
                             ],
-                          );
-                        },
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Get.toNamed(
-                            '/album',
-                            parameters: {
-                              'id': album['id'],
-                              'name': album['name'],
-                            },
-                          );
-                        },
-                        onLongPress: () {
-                          _showAlbumMenu(context, index);
-                        },
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ],
+                          ),
+                          Positioned.fill(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  Get.toNamed(
+                                    '/album',
+                                    parameters: {
+                                      'id': album['id'],
+                                      'name': album['name'],
+                                    },
+                                  );
+                                },
+                                onLongPress: () {
+                                  _showAlbumMenu(context, index);
+                                },
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 );
               },
