@@ -1,12 +1,18 @@
 package main
 
 import (
+	"context"
 	"crypto/sha512"
 	"encoding/hex"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
+	"os"
+	"time"
 
+	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
+	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
@@ -14,14 +20,27 @@ import (
 
 func main() {
 	app := pocketbase.New()
+	cfg := oss.LoadDefaultConfig().WithCredentialsProvider(credentials.NewEnvironmentVariableCredentialsProvider()).WithRegion(os.Getenv("OSS_REGION"))
+	ossClient := oss.NewClient(cfg)
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-		// register "GET /hello/{name}" route (allowed for everyone)
-		se.Router.GET("/hello/{name}", func(e *core.RequestEvent) error {
-			name := e.Request.PathValue("name")
-
-			return e.String(http.StatusOK, "Hello "+name)
-		})
+		se.Router.GET("/test/{bucket}/{key}", func(e *core.RequestEvent) error {
+			bucket := e.Request.PathValue("bucket")
+			key := e.Request.PathValue("key")
+			decKey, err := url.PathUnescape(key)
+			if err != nil {
+				return err
+			}
+			res, err := ossClient.Presign(context.Background(), &oss.GetObjectRequest{
+				Bucket: oss.Ptr(bucket),
+				Key:    oss.Ptr(decKey),
+			},
+				oss.PresignExpires(time.Hour))
+			if err != nil {
+				return err
+			}
+			return e.String(http.StatusOK, res.URL)
+		}).Bind()
 
 		// register "POST /api/myapp/settings" route (allowed only for authenticated users)
 		se.Router.POST("/api/myapp/settings", func(e *core.RequestEvent) error {
