@@ -78,19 +78,6 @@ class AlbumViewPage extends StatelessWidget {
                         );
                       },
                     ),
-                    // Image.network(
-                    //   photo['preview_url'].toString(),
-                    //   fit: BoxFit.cover,
-                    //   errorBuilder: (context, error, stackTrace) {
-                    //     return Center(
-                    //       child: Icon(
-                    //         Icons.broken_image,
-                    //         size: 40,
-                    //         color: Get.theme.colorScheme.onSurface,
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                   ),
                 ),
 

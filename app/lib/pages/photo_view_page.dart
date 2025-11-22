@@ -9,13 +9,9 @@ import 'package:photo_view/photo_view_gallery.dart';
 
 class PhotoViewPage extends StatefulWidget {
   final RxList<Map<String, dynamic>> photos;
-  late final PageController pageController;
   final int index;
 
-  PhotoViewPage({super.key, required this.photos, this.index = 0}) {
-    pageController = PageController(initialPage: index);
-  }
-
+  const PhotoViewPage({super.key, required this.photos, this.index = 0});
   @override
   State<PhotoViewPage> createState() => _PhotoViewPageState();
 }
@@ -31,9 +27,13 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
 
   final photoControllers = <int, PhotoViewController>{};
 
+  late final PageController pageController;
+  late PhotoViewController photoController;
+
   @override
   void initState() {
     HardwareKeyboard.instance.addHandler(handleKeys);
+    pageController = PageController(initialPage: widget.index);
     index.value = widget.index;
     super.initState();
   }
@@ -54,21 +54,21 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       return false;
     }
     if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-      widget.pageController.previousPage(
+      pageController.previousPage(
         duration: Duration(milliseconds: 200),
         curve: Curves.easeIn,
       );
     } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-      widget.pageController.nextPage(
+      pageController.nextPage(
         duration: Duration(milliseconds: 200),
         curve: Curves.easeIn,
       );
     } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-      final page = (widget.pageController.page ?? 0).toInt();
+      final page = (pageController.page ?? 0).toInt();
       final photoController = getPhotoController(page);
       photoController.scale = photoController.scale! * 1.1;
     } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-      final page = (widget.pageController.page ?? 0).toInt();
+      final page = (pageController.page ?? 0).toInt();
       final photoController = getPhotoController(page);
       photoController.scale = photoController.scale! * 0.9;
     } else if (event.logicalKey == LogicalKeyboardKey.escape) {
@@ -85,7 +85,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         body: PhotoViewGallery.builder(
           scrollPhysics: const BouncingScrollPhysics(),
           itemCount: widget.photos.length,
-          pageController: widget.pageController,
+          pageController: pageController,
           loadingBuilder: (context, event) {
             return Center(
               child: SizedBox(
