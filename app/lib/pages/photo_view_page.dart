@@ -54,11 +54,21 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       return false;
     }
     if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+      final page = (pageController.page ?? 0).toInt();
+      final photoController = getPhotoController(page);
+      // reset position
+      photoController.position = Offset.zero;
+
       pageController.previousPage(
         duration: Duration(milliseconds: 200),
         curve: Curves.easeIn,
       );
     } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+      final page = (pageController.page ?? 0).toInt();
+      final photoController = getPhotoController(page);
+      // reset position
+      photoController.position = Offset.zero;
+
       pageController.nextPage(
         duration: Duration(milliseconds: 200),
         curve: Curves.easeIn,
