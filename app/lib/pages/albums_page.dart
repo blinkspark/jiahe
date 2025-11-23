@@ -424,7 +424,6 @@ class AlbumsPage extends StatelessWidget {
                   ),
                   child: LayoutBuilder(
                     builder: (context, constrains) {
-                      logger.d(album['cover']);
                       return Stack(
                         children: [
                           Column(

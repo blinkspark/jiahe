@@ -94,6 +94,9 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         appBar: AppBar(title: Text(name.value)),
         body: PhotoViewGallery.builder(
           scrollPhysics: const BouncingScrollPhysics(),
+          backgroundDecoration: BoxDecoration(
+            color: Get.theme.colorScheme.surface,
+          ),
           itemCount: widget.photos.length,
           pageController: pageController,
           loadingBuilder: (context, event) {

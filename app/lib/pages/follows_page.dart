@@ -16,8 +16,8 @@ class FollowsPage extends StatelessWidget {
     logger.d('开始获取关注列表');
     try {
       follows.value = await appState.fetchFollows();
-      logger.d('关注列表: $follows');
     } catch (e) {
+      Get.snackbar('错误', '获取关注列表失败');
       logger.e('获取关注列表失败: $e');
     }
   }
@@ -26,8 +26,8 @@ class FollowsPage extends StatelessWidget {
     logger.d('开始获取关注者列表');
     try {
       followers.value = await appState.fetchFollowers();
-      logger.d('关注者列表: $followers');
     } catch (e) {
+      Get.snackbar('错误', '获取关注者列表失败');
       logger.e('获取关注者列表失败: $e');
     }
   }

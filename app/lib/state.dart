@@ -94,8 +94,6 @@ class AppStateController extends GetxController {
   Future<List<Map<String, dynamic>>> fetchAlbums() async {
     final res = await _pb.collection('albums').getFullList(expand: 'cover');
     final albums = await res.map((rec) async {
-      logger.d('获取相册: ${rec.get<RecordModel>('expand.cover')}');
-      logger.d('name: ${rec.get<String>('expand.cover.content')}');
       Map<String, dynamic> r = {
         'id': rec.id,
         'name': rec.getStringValue('name'),

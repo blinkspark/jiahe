@@ -74,7 +74,7 @@ class MainPage extends StatelessWidget {
                       ],
                     ),
                   );
-                  if (res ?? false) appState.logout();
+                  if (res == true) appState.logout();
                 },
                 child: Text('注销'),
               ),
