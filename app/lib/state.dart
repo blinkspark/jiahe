@@ -89,7 +89,6 @@ class AppStateController extends GetxController {
     final photos = album.getListValue<String>('photos');
     for (var photo in photos) {
       await deletePhotoFromAlbum(id, photo);
-      logger.d('删除照片: $photo');
     }
     await _pb.collection('albums').delete(id);
   }
@@ -214,7 +213,6 @@ class AppStateController extends GetxController {
   }
 
   Future<void> deletePhotoFromAlbum(String albumID, String photoID) async {
-    logger.d('删除图片: $photoID from album: $albumID');
     await _pb.collection('albums').update(albumID, body: {'photos-': photoID});
     try {
       await _pb

@@ -182,9 +182,6 @@ class AlbumViewPage extends StatelessWidget {
     final photo = photos[index];
     final theme = Theme.of(context);
     try {
-      // 这里应该调用删除照片的API
-      logger.d('删除照片: ${photo['id']}');
-
       // 确认删除对话框
       final confirm = await Get.dialog<bool>(
         AlertDialog(
