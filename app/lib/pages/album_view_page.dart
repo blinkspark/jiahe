@@ -297,7 +297,7 @@ class AlbumViewPage extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                '创建时间: ${photo['created_at'] ?? '未知'}',
+                '创建时间: ${photo['created'] ?? '未知'}',
                 style: TextStyle(color: theme.colorScheme.onSurface),
               ),
               if (photo['size'] != null) ...[
