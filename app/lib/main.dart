@@ -1,8 +1,8 @@
 import 'package:app/pages/album_view_page.dart';
 import 'package:app/pages/albums_page.dart';
 import 'package:app/pages/follows_page.dart';
+import 'package:app/pages/home_page.dart';
 import 'package:app/pages/login_page.dart';
-import 'package:app/pages/main_page.dart';
 import 'package:app/pages/share_almub_page.dart';
 import 'package:app/state.dart';
 import 'package:flutter/foundation.dart';
@@ -46,7 +46,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => MainPage()),
+        GetPage(name: '/', page: () => HomePage()),
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/albums', page: () => AlbumsPage()),
         GetPage(name: '/album', page: () => AlbumViewPage()),

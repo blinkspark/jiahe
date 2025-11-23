@@ -10,7 +10,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("主页"), centerTitle: true),
+      appBar: AppBar(title: Text("我的"), centerTitle: true),
       body: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
@@ -33,12 +33,6 @@ class MainPage extends StatelessWidget {
                   Get.toNamed('/follows');
                 },
                 child: Text('关注'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Get.toNamed('/albums');
-                },
-                child: Text('相册'),
               ),
               ElevatedButton(
                 onPressed: () {

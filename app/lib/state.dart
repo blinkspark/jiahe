@@ -23,6 +23,9 @@ class AppStateController extends GetxController {
   final uploadingFiles = <String>[].obs;
   final uploadStatus = ''.obs;
 
+  // 主页状态
+  final homePageIndex = 0.obs;
+
   @override
   void onInit() {
     super.onInit();

@@ -410,8 +410,8 @@ class AlbumsPage extends StatelessWidget {
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                // crossAxisSpacing: 10,
+                // mainAxisSpacing: 10,
                 childAspectRatio: 9 / 10,
               ),
               itemCount: albums.length,
