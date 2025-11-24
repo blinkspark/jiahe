@@ -316,7 +316,7 @@ class AppStateController extends GetxController {
         'album.id = "$albumID" && (readers.id ?= "$userID" || writers.id ?= "$userID")',
       );
       await _pb
-          .collection('almub_permissions')
+          .collection('album_permissions')
           .getFirstListItem(
             'album.id = "$albumID" && (readers.id ?= "$userID" || writers.id ?= "$userID")',
           );
@@ -332,12 +332,12 @@ class AppStateController extends GetxController {
     RecordModel? ap;
     try {
       ap = await _pb
-          .collection('almub_permissions')
+          .collection('album_permissions')
           .getFirstListItem("album.id = '$albumID'");
     } catch (e) {
       logger.d('创建权限');
       await _pb
-          .collection('almub_permissions')
+          .collection('album_permissions')
           .create(
             body: {
               'album': albumID,
@@ -348,7 +348,7 @@ class AppStateController extends GetxController {
       return;
     }
     await _pb
-        .collection('almub_permissions')
+        .collection('album_permissions')
         .update(
           ap.get<String>('id'),
           body: {
@@ -360,10 +360,10 @@ class AppStateController extends GetxController {
 
   Future<void> unshareAlbum(String albumID, String userID) async {
     final ap = await _pb
-        .collection('almub_permissions')
+        .collection('album_permissions')
         .getFirstListItem("album.id = '$albumID'");
     await _pb
-        .collection('almub_permissions')
+        .collection('album_permissions')
         .update(
           ap.get<String>('id'),
           body: {
