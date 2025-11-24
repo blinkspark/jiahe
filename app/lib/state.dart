@@ -76,7 +76,10 @@ class AppStateController extends GetxController {
   }
 
   Future<void> createAlbum(String name) async {
-    var id = _pb.authStore.record!.id;
+    final id = getUserID();
+    if (id == null) {
+      throw Exception('获取用户ID失败');
+    }
     await _pb.collection('albums').create(body: {'name': name, 'owner': id});
   }
 
@@ -116,7 +119,10 @@ class AppStateController extends GetxController {
 
   Future<void> createPhotoToAlbum(String? albumId, PlatformFile file) async {
     logger.d('开始上传: ${file.name} to album: $albumId');
-    final userID = _pb.authStore.record!.id;
+    final userID = getUserID();
+    if (userID == null) {
+      throw Exception('获取用户ID失败');
+    }
 
     // 开始上传
     isUploading.value = true;
@@ -258,9 +264,13 @@ class AppStateController extends GetxController {
   }
 
   Future<List<Map<String, dynamic>>> fetchFollows() async {
+    final userID = getUserID();
+    if (userID == null) {
+      throw Exception('获取用户ID失败');
+    }
     final res = await _pb
         .collection('follows')
-        .getFullList(filter: "from.id = '${getUserID()!}'", expand: 'to');
+        .getFullList(filter: "from.id = '${getUserID()}'", expand: 'to');
     return res.map((rec) {
       return {
         "id": rec.get<String>('id'),
@@ -270,9 +280,13 @@ class AppStateController extends GetxController {
   }
 
   Future<List<Map<String, dynamic>>> fetchFollowers() async {
+    final userID = getUserID();
+    if (userID == null) {
+      throw Exception('获取用户ID失败');
+    }
     final res = await _pb
         .collection('follows')
-        .getFullList(filter: "to.id = '${getUserID()!}'", expand: 'from');
+        .getFullList(filter: "to.id = '$userID'", expand: 'from');
     return res.map((rec) {
       return {
         "id": rec.get<String>('id'),
