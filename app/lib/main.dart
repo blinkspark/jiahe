@@ -27,10 +27,6 @@ Future<void> main() async {
   runApp(MainApp());
 }
 
-Logger newLogger() {
-  return Logger(level: Level.debug);
-}
-
 class MainApp extends StatelessWidget {
   final controller = Get.find<AppStateController>();
   final logger = Get.find<Logger>();
@@ -40,8 +36,8 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      theme: _buildTheme(Brightness.light, Colors.blue),
-      darkTheme: _buildTheme(Brightness.dark, Colors.blue),
+      theme: _buildTheme(Brightness.light, Colors.cyan),
+      darkTheme: _buildTheme(Brightness.dark, Colors.cyan),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
