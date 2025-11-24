@@ -1,4 +1,5 @@
 import 'package:app/components/create_album_dialog.dart';
+import 'package:app/components/need_login_panel.dart';
 import 'package:app/components/photo_grid.dart';
 import 'package:app/state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -404,7 +405,9 @@ class AlbumsPage extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Obx(() {
-          if (isFetching.value) {
+          if (appState.isLogin.value == false){
+            return NeedLoginPanel();
+          }else if (isFetching.value) {
             return Center(child: CircularProgressIndicator());
           } else {
             return GridView.builder(

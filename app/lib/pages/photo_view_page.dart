@@ -100,7 +100,6 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
           itemCount: widget.photos.length,
           pageController: pageController,
           loadingBuilder: (context, event) {
-            logger.d(event);
             return Center(
               child: SizedBox(
                 width: 20.0,

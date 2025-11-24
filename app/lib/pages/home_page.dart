@@ -1,5 +1,5 @@
 import 'package:app/pages/albums_page.dart';
-import 'package:app/pages/main_page.dart';
+import 'package:app/pages/me_page.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
       body: Obx(
         () => switch (appState.homePageIndex.value) {
           0 => AlbumsPage(),
-          1 => MainPage(),
+          1 => MePage(),
           _ => Center(child: Text("_")),
         },
       ),
