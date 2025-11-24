@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 
 class PhotoViewPage extends StatefulWidget {
   final RxList<Map<String, dynamic>> photos;
@@ -87,37 +88,95 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
     return false;
   }
 
+  void _previousImage() {
+    final page = (pageController.page ?? 0).toInt();
+    final photoController = getPhotoController(page);
+    // reset position
+    photoController.position = Offset.zero;
+
+    pageController.previousPage(
+      duration: Duration(milliseconds: 200),
+      curve: Curves.easeIn,
+    );
+  }
+
+  void _nextImage() {
+    final page = (pageController.page ?? 0).toInt();
+    final photoController = getPhotoController(page);
+    // reset position
+    photoController.position = Offset.zero;
+
+    pageController.nextPage(
+      duration: Duration(milliseconds: 200),
+      curve: Curves.easeIn,
+    );
+  }
+
+  bool _shouldShowNavigationButtons() {
+    // 在Web或Windows平台显示导航按钮
+    return kIsWeb || defaultTargetPlatform == TargetPlatform.windows;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
         appBar: AppBar(title: Text(name.value)),
-        body: PhotoViewGallery.builder(
-          scrollPhysics: const BouncingScrollPhysics(),
-          backgroundDecoration: BoxDecoration(
-            color: Get.theme.colorScheme.surface,
-          ),
-          itemCount: widget.photos.length,
-          pageController: pageController,
-          loadingBuilder: (context, event) {
-            return Center(
-              child: SizedBox(
-                width: 20.0,
-                height: 20.0,
-                child: CircularProgressIndicator(),
+        body: Stack(
+          children: [
+            PhotoViewGallery.builder(
+              scrollPhysics: const BouncingScrollPhysics(),
+              backgroundDecoration: BoxDecoration(
+                color: Get.theme.colorScheme.surface,
               ),
-            );
-          },
-          builder: (context, index) => PhotoViewGalleryPageOptions(
-            imageProvider: CachedNetworkImageProvider(
-              widget.photos[index]['url'].toString(),
+              itemCount: widget.photos.length,
+              pageController: pageController,
+              loadingBuilder: (context, event) {
+                return Center(
+                  child: SizedBox(
+                    width: 20.0,
+                    height: 20.0,
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              },
+              builder: (context, index) => PhotoViewGalleryPageOptions(
+                imageProvider: CachedNetworkImageProvider(
+                  widget.photos[index]['url'].toString(),
+                ),
+                controller: getPhotoController(index),
+                filterQuality: FilterQuality.medium,
+                heroAttributes: PhotoViewHeroAttributes(
+                  tag: widget.photos[index]['id'].toString(),
+                ),
+              ),
             ),
-            controller: getPhotoController(index),
-            filterQuality: FilterQuality.medium,
-            heroAttributes: PhotoViewHeroAttributes(
-              tag: widget.photos[index]['id'].toString(),
-            ),
-          ),
+            // 仅在Web或Windows平台显示左右导航按钮
+            if (_shouldShowNavigationButtons()) ...[
+              Positioned(
+                left: 16,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back_ios, size: 36),
+                    onPressed: _previousImage,
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 16,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_forward_ios, size: 36),
+                    onPressed: _nextImage,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );
