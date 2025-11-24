@@ -109,7 +109,7 @@ The application uses these main collections:
 - `albums`: Photo albums with owner and permissions
 - `photos`: Photo metadata and file references
 - `follows`: User following relationships
-- `almub_permissions`: Album sharing permissions (note: typo in collection name)
+- `album_permissions`: Album sharing permissions
 
 ## Development Notes
 

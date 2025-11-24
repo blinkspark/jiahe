@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
-class ShareAlmubPage extends StatelessWidget {
+class ShareAlbumPage extends StatelessWidget {
   final AppStateController appState = Get.find();
   final Logger logger = Get.find();
   final followers = <Map<String, dynamic>>[].obs;
 
-  ShareAlmubPage({super.key});
+  ShareAlbumPage({super.key});
 
   @override
   Widget build(BuildContext context) {

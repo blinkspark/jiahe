@@ -51,7 +51,7 @@ class MainApp extends StatelessWidget {
         GetPage(name: '/albums', page: () => AlbumsPage()),
         GetPage(name: '/album', page: () => AlbumViewPage()),
         GetPage(name: '/follows', page: () => FollowsPage()),
-        GetPage(name: '/share_album', page: () => ShareAlmubPage()),
+        GetPage(name: '/share_album', page: () => ShareAlbumPage()),
       ],
     );
   }
