@@ -10,7 +10,7 @@ NC='\033[0m' # No Color
 # 配置
 BACKEND_DIR="backend/"
 FRONTEND_DIR="app/"
-BACKEND_HOST="192.168.3.219"
+BACKEND_HOST="127.0.0.1"
 BACKEND_PORT="8090"
 
 # 日志函数
@@ -74,7 +74,7 @@ start_backend() {
         sleep 2
     fi
 
-    go run . serve --http $BACKEND_HOST:$BACKEND_PORT &
+    go run . serve --http $BACKEND_HOST:$BACKEND_PORT
     BACKEND_PID=$!
     cd ..
 
@@ -98,10 +98,10 @@ start_frontend() {
     # 获取 Flutter 设备列表
     if [ -n "$target_device" ]; then
         log_info "在指定设备上启动: $target_device"
-        flutter run -d "$target_device" &
+        flutter run -d "$target_device"
     else
         log_info "在默认设备上启动"
-        flutter run &
+        flutter run
     fi
 
     FRONTEND_PID=$!
