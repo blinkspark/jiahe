@@ -15,7 +15,8 @@ class HomePage extends StatelessWidget {
       body: Obx(
         () => switch (appState.homePageIndex.value) {
           0 => AlbumsPage(),
-          1 => MePage(),
+          1 => Center(child: Text("1")),
+          2 => MePage(),
           _ => Center(child: Text("_")),
         },
       ),
@@ -25,10 +26,11 @@ class HomePage extends StatelessWidget {
           onDestinationSelected: (value) =>
               appState.homePageIndex.value = value,
           elevation: 10,
-          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          // labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           destinations: [
             // NavigationDestination(icon: Icon(Icons.home), label: '首页'),
             NavigationDestination(icon: Icon(Icons.photo_album), label: '相册'),
+            NavigationDestination(icon: Icon(Icons.cloud_sync), label: '网盘'),
             NavigationDestination(icon: Icon(Icons.person), label: '我的'),
           ],
         ),
