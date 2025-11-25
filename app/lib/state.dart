@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:app/services/drive_service.dart';
+import 'package:app/services/user_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,7 +19,8 @@ class AppStateController extends GetxController {
   late final AsyncAuthStore _authStore;
   late final PocketBase _pb;
   late final Logger logger;
-  late final DriveService _driveService;
+  late final DriveService driveService;
+  late final UserService userService;
 
   // 上传状态管理
   final isUploading = false.obs;
@@ -46,7 +48,8 @@ class AppStateController extends GetxController {
       username.value = _pb.authStore.record?.getStringValue('name') ?? '';
       userID.value = _pb.authStore.record?.id ?? '';
     });
-    _driveService = DriveService(pb: _pb, logger: logger);
+    userService = UserService(pb: _pb, logger: logger);
+    driveService = DriveService(pb: _pb, logger: logger);
   }
 
   Future<void> login(String email, String password) async {
