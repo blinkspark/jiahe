@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app/services/drive_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,10 +13,12 @@ import 'package:crypto/crypto.dart';
 class AppStateController extends GetxController {
   final isLogin = false.obs;
   final username = ''.obs;
+  final userID = ''.obs;
   final _box = GetStorage();
   late final AsyncAuthStore _authStore;
   late final PocketBase _pb;
   late final Logger logger;
+  late final DriveService _driveService;
 
   // 上传状态管理
   final isUploading = false.obs;
@@ -37,10 +40,13 @@ class AppStateController extends GetxController {
     _pb = PocketBase(dotenv.get('BASE_URL'), authStore: _authStore);
     isLogin.value = _pb.authStore.isValid;
     username.value = _pb.authStore.record?.getStringValue('name') ?? '';
+    userID.value = _pb.authStore.record?.id ?? '';
     _pb.authStore.onChange.listen((data) {
       isLogin.value = _pb.authStore.isValid;
       username.value = _pb.authStore.record?.getStringValue('name') ?? '';
+      userID.value = _pb.authStore.record?.id ?? '';
     });
+    _driveService = DriveService(pb: _pb, logger: logger);
   }
 
   Future<void> login(String email, String password) async {
@@ -375,11 +381,5 @@ class AppStateController extends GetxController {
 
   Future<void> updateAlbumCover(String album, String res) async {
     await _pb.collection('albums').update(album, body: {'cover': res});
-  }
-
-  Future<void> createDrive() async {
-    await _pb
-        .collection('drives')
-        .create(body: {'name': '默认网盘', 'owner': getUserID()});
   }
 }

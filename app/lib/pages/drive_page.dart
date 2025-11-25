@@ -43,7 +43,7 @@ class DriveDebugDialog extends StatelessWidget {
         TextButton(
           onPressed: () async {
             try {
-              await appState.createDrive();
+              // TODO: await appState.createDrive();
               Get.back();
               Get.snackbar("Success", "Drive created");
             } catch (e) {
