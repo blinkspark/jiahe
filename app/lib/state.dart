@@ -376,4 +376,10 @@ class AppStateController extends GetxController {
   Future<void> updateAlbumCover(String album, String res) async {
     await _pb.collection('albums').update(album, body: {'cover': res});
   }
+
+  Future<void> createDrive() async {
+    await _pb
+        .collection('drives')
+        .create(body: {'name': '默认网盘', 'owner': getUserID()});
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:app/pages/albums_page.dart';
+import 'package:app/pages/drive_page.dart';
 import 'package:app/pages/me_page.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class HomePage extends StatelessWidget {
       body: Obx(
         () => switch (appState.homePageIndex.value) {
           0 => AlbumsPage(),
-          1 => Center(child: Text("1")),
+          1 => DrivePage(),
           2 => MePage(),
           _ => Center(child: Text("_")),
         },
@@ -25,7 +26,7 @@ class HomePage extends StatelessWidget {
           selectedIndex: appState.homePageIndex.value,
           onDestinationSelected: (value) =>
               appState.homePageIndex.value = value,
-          elevation: 10,
+          elevation: 4,
           // labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           destinations: [
             // NavigationDestination(icon: Icon(Icons.home), label: '首页'),
