@@ -27,7 +27,6 @@ class HomePage extends StatelessWidget {
           onDestinationSelected: (value) =>
               appState.homePageIndex.value = value,
           elevation: 10,
-          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           destinations: [
             // NavigationDestination(icon: Icon(Icons.home), label: '首页'),
             NavigationDestination(icon: Icon(Icons.photo_album), label: '相册'),

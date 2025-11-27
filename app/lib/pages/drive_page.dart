@@ -1,6 +1,8 @@
 import 'package:app/controllers/drive_controller.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:logger/web.dart';
 
 class DrivePage extends StatefulWidget {
@@ -77,8 +79,15 @@ class _DrivePageState extends State<DrivePage> {
             icon: Icon(Icons.create_new_folder),
           ),
           IconButton(
-            onPressed: () {
-              // TODO: upload file
+            onPressed: () async {
+              final res = await FilePicker.platform.pickFiles(type: FileType.any);
+              logger.d(res);
+              final xf = res?.xFiles[0];
+              final rd = xf?.openRead();
+              final bts = await rd?.toBytes();
+              logger.d(bts);
+              final bts1 = await xf?.openRead().toBytes();
+              logger.d(bts1);
             },
             icon: Icon(Icons.upload_file),
           ),
