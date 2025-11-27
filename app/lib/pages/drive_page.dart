@@ -31,20 +31,34 @@ class _DrivePageState extends State<DrivePage> {
         actions: [
           IconButton(
             onPressed: () {
+              driveController.fetchObjects(driveController.currentPath.value);
+            },
+            icon: Icon(Icons.refresh),
+          ),
+          IconButton(
+            onPressed: () {
               final path = driveController.currentPath.value;
+              if (path == '/') return;
               final splitedPath = path.split('/');
               if (splitedPath.length > 1) {
-                final newPath = path.substring(0, path.lastIndexOf('/'));
-                driveController.changePath(newPath == '' ? '/' : newPath);
+                var newPath = path.substring(0, path.lastIndexOf('/'));
+                newPath = newPath.isEmpty ? '/' : newPath;
+                driveController.changePath(newPath);
               }
             },
             icon: Icon(Icons.arrow_upward),
           ),
           IconButton(
             onPressed: () {
-              driveController.fetchObjects(driveController.currentPath.value);
+              // TODO: create folder
             },
-            icon: Icon(Icons.refresh),
+            icon: Icon(Icons.create_new_folder),
+          ),
+          IconButton(
+            onPressed: () {
+              // TODO: upload file
+            },
+            icon: Icon(Icons.upload_file),
           ),
         ],
       ),
