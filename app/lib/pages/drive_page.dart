@@ -49,8 +49,30 @@ class _DrivePageState extends State<DrivePage> {
             icon: Icon(Icons.arrow_upward),
           ),
           IconButton(
-            onPressed: () {
-              // TODO: create folder
+            onPressed: () async {
+              final nameController = TextEditingController();
+              await Get.dialog(
+                AlertDialog(
+                  title: Text('新建文件夹'),
+                  content: TextField(controller: nameController),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: Text('取消'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        logger.d(nameController.text);
+                        driveController.createFolder(nameController.text);
+                        Get.back();
+                      },
+                      child: Text('确定'),
+                    ),
+                  ],
+                ),
+              );
             },
             icon: Icon(Icons.create_new_folder),
           ),

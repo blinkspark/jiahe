@@ -29,4 +29,21 @@ class DriveController extends GetxController {
     currentPath.value = path;
     await fetchObjects(path);
   }
+
+  Future<void> createFolder(String name) async {
+    try {
+      isFetching.value = true;
+      await driveService.createFolder(currentPath.value, name);
+    } catch (e) {
+      logger.e(e);
+      Get.snackbar(
+        "错误",
+        e.toString(),
+        // borderColor: Get.theme.colorScheme.error,
+      );
+    } finally {
+      isFetching.value = false;
+    }
+    await fetchObjects(currentPath.value);
+  }
 }
