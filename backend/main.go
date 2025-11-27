@@ -74,6 +74,39 @@ func main() {
 		return e.Next()
 	})
 
+	app.OnRecordAfterCreateSuccess("users").BindFunc(func(e *core.RecordEvent) error {
+		// create default album
+		albums, err := app.FindCollectionByNameOrId("albums")
+		if err != nil {
+			return err
+		}
+		album := core.NewRecord(albums)
+		album.Set("name", "默认相册")
+		album.Set("owner", e.Record.Id)
+
+		err = app.Save(album)
+		if err != nil {
+			return err
+		}
+
+		objects, err := app.FindCollectionByNameOrId("objects")
+		if err != nil {
+			return err
+		}
+
+		object := core.NewRecord(objects)
+		object.Set("name", "/")
+		object.Set("owner", e.Record.Id)
+		object.Set("type", "folder")
+
+		err = app.Save(object)
+		if err != nil {
+			return err
+		}
+
+		return e.Next()
+	})
+
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
 	}
