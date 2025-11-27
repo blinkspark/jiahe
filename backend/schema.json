@@ -798,7 +798,7 @@
                 "type": "text"
             },
             {
-                "cascadeDelete": false,
+                "cascadeDelete": true,
                 "collectionId": "pbc_3287366145",
                 "hidden": false,
                 "id": "relation966291011",
@@ -1005,7 +1005,7 @@
                 "type": "text"
             },
             {
-                "cascadeDelete": false,
+                "cascadeDelete": true,
                 "collectionId": "_pb_users_auth_",
                 "hidden": false,
                 "id": "relation3105530224",
@@ -1018,7 +1018,7 @@
                 "type": "relation"
             },
             {
-                "cascadeDelete": false,
+                "cascadeDelete": true,
                 "collectionId": "_pb_users_auth_",
                 "hidden": false,
                 "id": "relation3616002756",
@@ -1064,6 +1064,121 @@
             "CREATE INDEX `idx_y0SzhvVbTR` ON `follows` (`to`)",
             "CREATE UNIQUE INDEX `idx_9UuhvBItvY` ON `follows` (\n  `from`,\n  `to`\n)",
             "CREATE INDEX `idx_ibr2sYaQ6g` ON `follows` (`from`)"
+        ],
+        "system": false
+    },
+    {
+        "id": "pbc_592032537",
+        "listRule": "@request.auth.id = owner.id",
+        "viewRule": "@request.auth.id = owner.id",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id = owner.id",
+        "deleteRule": "@request.auth.id = owner.id",
+        "name": "objects",
+        "type": "base",
+        "fields": [
+            {
+                "autogeneratePattern": "[a-z0-9]{15}",
+                "hidden": false,
+                "id": "text3208210256",
+                "max": 15,
+                "min": 15,
+                "name": "id",
+                "pattern": "^[a-z0-9]+$",
+                "presentable": false,
+                "primaryKey": true,
+                "required": true,
+                "system": true,
+                "type": "text"
+            },
+            {
+                "autogeneratePattern": "",
+                "hidden": false,
+                "id": "text1579384326",
+                "max": 0,
+                "min": 0,
+                "name": "name",
+                "pattern": "",
+                "presentable": false,
+                "primaryKey": false,
+                "required": false,
+                "system": false,
+                "type": "text"
+            },
+            {
+                "hidden": false,
+                "id": "select2363381545",
+                "maxSelect": 1,
+                "name": "type",
+                "presentable": false,
+                "required": false,
+                "system": false,
+                "type": "select",
+                "values": [
+                    "file",
+                    "folder"
+                ]
+            },
+            {
+                "cascadeDelete": false,
+                "collectionId": "_pb_users_auth_",
+                "hidden": false,
+                "id": "relation3479234172",
+                "maxSelect": 1,
+                "minSelect": 0,
+                "name": "owner",
+                "presentable": false,
+                "required": false,
+                "system": false,
+                "type": "relation"
+            },
+            {
+                "cascadeDelete": false,
+                "collectionId": "pbc_592032537",
+                "hidden": false,
+                "id": "relation1503585331",
+                "maxSelect": 1,
+                "minSelect": 0,
+                "name": "parent",
+                "presentable": false,
+                "required": false,
+                "system": false,
+                "type": "relation"
+            },
+            {
+                "hidden": false,
+                "id": "bool2545907250",
+                "name": "uploaded",
+                "presentable": false,
+                "required": false,
+                "system": false,
+                "type": "bool"
+            },
+            {
+                "hidden": false,
+                "id": "autodate2990389176",
+                "name": "created",
+                "onCreate": true,
+                "onUpdate": false,
+                "presentable": false,
+                "system": false,
+                "type": "autodate"
+            },
+            {
+                "hidden": false,
+                "id": "autodate3332085495",
+                "name": "updated",
+                "onCreate": true,
+                "onUpdate": true,
+                "presentable": false,
+                "system": false,
+                "type": "autodate"
+            }
+        ],
+        "indexes": [
+            "CREATE INDEX `idx_9bN3ITinMX` ON `objects` (`owner`)",
+            "CREATE INDEX `idx_7nWncJHegO` ON `objects` (`name`)",
+            "CREATE INDEX `idx_8Y7pYx6NgF` ON `objects` (`parent`)"
         ],
         "system": false
     },
@@ -1200,6 +1315,69 @@
         ],
         "indexes": [
             "CREATE INDEX `idx_2MZSjgnDg0` ON `photos` (`owner`)"
+        ],
+        "system": false
+    },
+    {
+        "id": "pbc_1308369471",
+        "listRule": "@request.auth.id = user.id",
+        "viewRule": "@request.auth.id = user.id",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id = user.id",
+        "deleteRule": "@request.auth.id = user.id",
+        "name": "user_configs",
+        "type": "base",
+        "fields": [
+            {
+                "autogeneratePattern": "[a-z0-9]{15}",
+                "hidden": false,
+                "id": "text3208210256",
+                "max": 15,
+                "min": 15,
+                "name": "id",
+                "pattern": "^[a-z0-9]+$",
+                "presentable": false,
+                "primaryKey": true,
+                "required": true,
+                "system": true,
+                "type": "text"
+            },
+            {
+                "cascadeDelete": true,
+                "collectionId": "_pb_users_auth_",
+                "hidden": false,
+                "id": "relation2375276105",
+                "maxSelect": 1,
+                "minSelect": 0,
+                "name": "user",
+                "presentable": false,
+                "required": false,
+                "system": false,
+                "type": "relation"
+            },
+            {
+                "hidden": false,
+                "id": "autodate2990389176",
+                "name": "created",
+                "onCreate": true,
+                "onUpdate": false,
+                "presentable": false,
+                "system": false,
+                "type": "autodate"
+            },
+            {
+                "hidden": false,
+                "id": "autodate3332085495",
+                "name": "updated",
+                "onCreate": true,
+                "onUpdate": true,
+                "presentable": false,
+                "system": false,
+                "type": "autodate"
+            }
+        ],
+        "indexes": [
+            "CREATE UNIQUE INDEX `idx_KaMZjHW3w1` ON `user_configs` (`user`)"
         ],
         "system": false
     },
