@@ -14,7 +14,7 @@ class DriveService extends GetxService {
       if (item.getStringValue("type") == "folder"){
         final name = item.getStringValue("name");
         final endName = name.split("/").last;
-        item.data["name"] = endName;
+        item.data["display_name"] = endName;
       }
       return item.data;
     }).toList();

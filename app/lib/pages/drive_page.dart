@@ -28,23 +28,50 @@ class _DrivePageState extends State<DrivePage> {
       appBar: AppBar(
         title: Obx(() => Text('网盘 ${driveController.currentPath}')),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              final path = driveController.currentPath.value;
+              final splitedPath = path.split('/');
+              if (splitedPath.length > 1) {
+                final newPath = path.substring(0, path.lastIndexOf('/'));
+                driveController.changePath(newPath == '' ? '/' : newPath);
+              }
+            },
+            icon: Icon(Icons.arrow_upward),
+          ),
+          IconButton(
+            onPressed: () {
+              driveController.fetchObjects(driveController.currentPath.value);
+            },
+            icon: Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: Obx(
         () => driveController.isFetching.value
             ? Center(child: CircularProgressIndicator())
             : ListView.builder(
-              itemCount: driveController.objectList.length,
-              itemBuilder: (context, index) {
-                final item = driveController.objectList[index];
-                return ListTile(
-                  leading: item["type"] == "folder"
-                      ? Icon(Icons.folder)
-                      : Icon(Icons.insert_drive_file_outlined),
-                  title: Text(item['name']),
-                  onTap: () {},
-                );
-              },
-            ),
+                itemCount: driveController.objectList.length,
+                itemBuilder: (context, index) {
+                  final item = driveController.objectList[index];
+                  return ListTile(
+                    leading: item["type"] == "folder"
+                        ? Icon(Icons.folder)
+                        : Icon(Icons.insert_drive_file_outlined),
+                    title: Text(
+                      item["type"] == "folder"
+                          ? item['display_name']
+                          : item['name'],
+                    ),
+                    onTap: () {
+                      if (item["type"] == "folder") {
+                        driveController.changePath(item['name']);
+                      }
+                    },
+                  );
+                },
+              ),
       ),
     );
   }

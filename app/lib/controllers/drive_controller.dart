@@ -24,4 +24,9 @@ class DriveController extends GetxController {
       isFetching.value = false;
     }
   }
+
+  Future<void> changePath(String path) async {
+    currentPath.value = path;
+    await fetchObjects(path);
+  }
 }
