@@ -53,4 +53,20 @@ class DriveService extends GetxService {
           },
         );
   }
+
+  Future<String> getUploadUrl(String path, String name) async {
+    var nPath = "$path/$name";
+    if (nPath.startsWith("//")) {
+      nPath = nPath.substring(1);
+    }
+    logger.d("nPath $nPath");
+
+    final encoded = Uri.encodeComponent(nPath);
+    logger.d("encoded $encoded");
+
+    final res = await pb.send<String>("/presign/$encoded");
+
+    logger.d(res);
+    return res;
+  }
 }

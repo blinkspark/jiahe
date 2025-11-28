@@ -1,6 +1,9 @@
 import 'package:app/services/drive_service.dart';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:http/http.dart';
 
 class DriveController extends GetxController {
   final currentPath = '/'.obs;
@@ -36,14 +39,46 @@ class DriveController extends GetxController {
       await driveService.createFolder(currentPath.value, name);
     } catch (e) {
       logger.e(e);
-      Get.snackbar(
-        "错误",
-        e.toString(),
-        // borderColor: Get.theme.colorScheme.error,
-      );
+      Get.snackbar("错误", e.toString());
     } finally {
       isFetching.value = false;
     }
     await fetchObjects(currentPath.value);
+  }
+
+  Future<void> uploadFiles(List<PlatformFile> files) async {
+    for (var file in files) {
+      final url = await driveService.getUploadUrl(currentPath.value, file.name);
+      logger.d(url);
+      // logger.d(file.bytes);
+      try {
+        final res = await put(
+          Uri.parse(url),
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "Content-Length": file.size.toString(),
+          },
+          body: file.bytes,
+        );
+        // final res = await Dio().put<String>(
+        //   url,
+        //   data: file.bytes,
+        //   options: Options(
+        //     headers: {
+        //       "Content-Type": "application/octet-stream",
+        //       "Content-Length": file.size,
+        //     },
+        //     // responseType: ResponseType.plain,
+        //   ),
+        //   onSendProgress: (count, total) {
+        //     logger.d("$count/$total");
+        //   },
+        // );
+        logger.d(res.statusCode);
+        logger.d(res.body);
+      } catch (e) {
+        logger.e(e);
+      }
+    }
   }
 }

@@ -9,19 +9,26 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"time"
 
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
+	"github.com/joho/godotenv"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
 	app := pocketbase.New()
 	cfg := oss.LoadDefaultConfig().WithCredentialsProvider(credentials.NewEnvironmentVariableCredentialsProvider()).WithRegion(os.Getenv("OSS_REGION"))
 	ossClient := oss.NewClient(cfg)
+	bucket := os.Getenv("OSS_BUCKET")
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		se.Router.GET("/test/{bucket}/{key}", func(e *core.RequestEvent) error {
@@ -41,6 +48,33 @@ func main() {
 			}
 			return e.String(http.StatusOK, res.URL)
 		}).Bind()
+
+		se.Router.GET("/presign/{path}", func(e *core.RequestEvent) error {
+			reqPath := e.Request.PathValue("path")
+			app.Logger().Debug("presign", "path", reqPath)
+			app.Logger().Debug("presign", "bucket", bucket)
+			dir, fname := path.Split(reqPath)
+			app.Logger().Debug("presign", "dir", dir)
+			app.Logger().Debug("presign", "fname", fname)
+			objs, err := app.FindCollectionByNameOrId("objects")
+			if err != nil {
+				return err
+			}
+			app.Logger().Debug("presign", "objs", objs.Id)
+			key := path.Join(objs.Id, e.Auth.Id, reqPath)
+			app.Logger().Debug("presign", "key", key)
+
+			res, err := ossClient.Presign(context.Background(), &oss.PutObjectRequest{
+				Bucket: oss.Ptr(bucket),
+				Key:    oss.Ptr(key),
+			}, oss.PresignExpires(time.Minute*10))
+			if err != nil {
+				return err
+			}
+			app.Logger().Debug("presign", "url", res.SignedHeaders)
+
+			return e.String(http.StatusOK, res.URL)
+		}).Bind(apis.RequireAuth())
 
 		// register "POST /api/myapp/settings" route (allowed only for authenticated users)
 		se.Router.POST("/api/myapp/settings", func(e *core.RequestEvent) error {

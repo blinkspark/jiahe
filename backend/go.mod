@@ -4,6 +4,7 @@ go 1.24.5
 
 require (
 	github.com/aliyun/alibabacloud-oss-go-sdk-v2 v1.3.0
+	github.com/joho/godotenv v1.5.1
 	github.com/pocketbase/pocketbase v0.34.0
 )
 
@@ -36,7 +37,7 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
-	modernc.org/libc v1.67.1 // indirect
+	modernc.org/libc v1.66.10 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.40.1 // indirect
