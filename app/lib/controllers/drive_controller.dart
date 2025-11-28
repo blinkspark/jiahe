@@ -52,30 +52,30 @@ class DriveController extends GetxController {
       logger.d(url);
       // logger.d(file.bytes);
       try {
-        final res = await put(
-          Uri.parse(url),
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "Content-Length": file.size.toString(),
-          },
-          body: file.bytes,
-        );
-        // final res = await Dio().put<String>(
-        //   url,
-        //   data: file.bytes,
-        //   options: Options(
-        //     headers: {
-        //       "Content-Type": "application/octet-stream",
-        //       "Content-Length": file.size,
-        //     },
-        //     // responseType: ResponseType.plain,
-        //   ),
-        //   onSendProgress: (count, total) {
-        //     logger.d("$count/$total");
+        // final res = await put(
+        //   Uri.parse(url),
+        //   headers: {
+        //     // "Content-Type": "application/octet-stream",
+        //     "Content-Length": file.size.toString(),
         //   },
+        //   body: file.bytes,
         // );
+        final res = await Dio().put<String>(
+          url,
+          data: file.readStream!,
+          options: Options(
+            headers: {
+              // "Content-Type": "application/octet-stream",
+              "Content-Length": file.size,
+            },
+            // responseType: ResponseType.plain,
+          ),
+          onSendProgress: (count, total) {
+            logger.d("$count/$total");
+          },
+        );
         logger.d(res.statusCode);
-        logger.d(res.body);
+        logger.d(res.data);
       } catch (e) {
         logger.e(e);
       }

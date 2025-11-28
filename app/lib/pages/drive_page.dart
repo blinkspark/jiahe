@@ -81,18 +81,12 @@ class _DrivePageState extends State<DrivePage> {
             onPressed: () async {
               final res = await FilePicker.platform.pickFiles(
                 type: FileType.any,
-                // withReadStream: true,
-                withData: true,
+                withReadStream: true,
+                // withData: true,
               );
               logger.d(res);
               if (res == null) return;
               driveController.uploadFiles(res.files);
-              // final xf = res?.xFiles[0];
-              // final rd = xf?.openRead();
-              // final bts = await rd?.toBytes();
-              // logger.d(bts);
-              // final bts1 = await xf?.openRead().toBytes();
-              // logger.d(bts1);
             },
             icon: Icon(Icons.upload_file),
           ),
