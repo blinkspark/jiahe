@@ -49,7 +49,7 @@ class DriveService extends GetxService {
             "name": nPath,
             "type": "folder",
             "parent": parent.id,
-            "owner": (await userService.getUserID())!,
+            "owner": userService.getUserID(),
           },
         );
   }
@@ -68,5 +68,28 @@ class DriveService extends GetxService {
 
     logger.d(res);
     return res;
+  }
+
+  Future<void> createObject(String path, String name, int size) async {
+    var key = [path,name].join("/");
+    if (key.startsWith("//")) {
+      key = key.substring(1);
+    }
+    final parent = await pb
+        .collection("objects")
+        .getFirstListItem("name = '$path'");
+    logger.d("parent $parent");
+    await pb
+        .collection("objects")
+        .create(
+          body: {
+            "name": name,
+            "type": "file",
+            "key": key,
+            "owner": userService.getUserID(),
+            "parent": parent.id,
+            "size": size,
+          },
+        );
   }
 }

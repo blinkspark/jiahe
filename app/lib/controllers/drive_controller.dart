@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:http/http.dart';
 
 class DriveController extends GetxController {
   final currentPath = '/'.obs;
@@ -49,18 +48,10 @@ class DriveController extends GetxController {
   Future<void> uploadFiles(List<PlatformFile> files) async {
     for (var file in files) {
       final url = await driveService.getUploadUrl(currentPath.value, file.name);
+
       logger.d(url);
-      // logger.d(file.bytes);
       try {
-        // final res = await put(
-        //   Uri.parse(url),
-        //   headers: {
-        //     // "Content-Type": "application/octet-stream",
-        //     "Content-Length": file.size.toString(),
-        //   },
-        //   body: file.bytes,
-        // );
-        final res = await Dio().put<String>(
+        await Dio().put<String>(
           url,
           data: file.readStream!,
           options: Options(
@@ -74,8 +65,11 @@ class DriveController extends GetxController {
             logger.d("$count/$total");
           },
         );
-        logger.d(res.statusCode);
-        logger.d(res.data);
+        await driveService.createObject(
+          currentPath.value,
+          file.name,
+          file.size,
+        );
       } catch (e) {
         logger.e(e);
       }

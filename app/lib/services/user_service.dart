@@ -6,7 +6,7 @@ class UserService extends GetxService {
   final Logger logger = Get.find();
   final PocketBase pb = Get.find();
 
-  Future<String?> getUserID() async {
+  String? getUserID() {
     return pb.authStore.record?.id;
   }
 

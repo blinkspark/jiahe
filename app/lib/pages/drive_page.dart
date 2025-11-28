@@ -18,9 +18,7 @@ class _DrivePageState extends State<DrivePage> {
   @override
   void initState() {
     super.initState();
-    driveController.fetchObjects(driveController.currentPath.value).then((v) {
-      logger.d(driveController.objectList);
-    });
+    driveController.fetchObjects(driveController.currentPath.value);
   }
 
   @override
