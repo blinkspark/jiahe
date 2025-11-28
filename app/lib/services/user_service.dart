@@ -10,7 +10,7 @@ class UserService extends GetxService {
     return pb.authStore.record?.id;
   }
 
-  Future<String?> getUserName() async {
+  String? getUserName() {
     return pb.authStore.record?.getStringValue("name");
   }
 

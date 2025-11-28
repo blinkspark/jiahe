@@ -101,6 +101,22 @@ class _DrivePageState extends State<DrivePage> {
                     leading: item["type"] == "folder"
                         ? Icon(Icons.folder)
                         : Icon(Icons.insert_drive_file_outlined),
+                    trailing: PopupMenuButton(
+                      onSelected: (value) {
+                        logger.d(value);
+                      },
+                      itemBuilder: (ctx) {
+                        return [
+                          PopupMenuItem(
+                            value: "delete",
+                            child: ListTile(
+                              leading: Icon(Icons.delete_outline),
+                              title: Text("删除"),
+                            ),
+                          ),
+                        ];
+                      },
+                    ),
                     title: Text(
                       item["type"] == "folder"
                           ? item['display_name']
