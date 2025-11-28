@@ -4,14 +4,13 @@ import 'package:app/pages/follows_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/login_page.dart';
 import 'package:app/pages/share_almub_page.dart';
+import 'package:app/services/init_service.dart';
 import 'package:app/state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/web.dart';
 
 Future<void> main() async {
@@ -20,9 +19,7 @@ Future<void> main() async {
     final license = await rootBundle.loadString('google_fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['google_fonts'], license);
   });
-  await GetStorage.init();
-  await dotenv.load();
-  Get.put(Logger(level: Level.all));
+  await Get.putAsync(() => InitService().init());
   Get.put(AppStateController());
   runApp(MainApp());
 }

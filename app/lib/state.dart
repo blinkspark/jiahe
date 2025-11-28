@@ -3,9 +3,7 @@ import 'package:app/services/drive_service.dart';
 import 'package:app/services/user_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:http/http.dart' as http;
@@ -14,13 +12,8 @@ import 'package:crypto/crypto.dart';
 class AppStateController extends GetxController {
   final isLogin = false.obs;
   final username = ''.obs;
-  final userID = ''.obs;
-  final _box = GetStorage();
-  late final AsyncAuthStore _authStore;
-  late final PocketBase _pb;
-  late final Logger logger;
-  late final DriveService driveService;
-  late final UserService userService;
+  final PocketBase _pb = Get.find();
+  final Logger _logger = Get.find();
 
   // 上传状态管理
   final isUploading = false.obs;
@@ -34,12 +27,6 @@ class AppStateController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    logger = Get.find<Logger>();
-    _authStore = AsyncAuthStore(
-      save: (String data) async => _box.write('pb_auth', data),
-      initial: _box.read<String>('pb_auth'),
-    );
-    _pb = PocketBase(dotenv.get('BASE_URL'), authStore: _authStore);
     isLogin.value = _pb.authStore.isValid;
     username.value = _pb.authStore.record?.getStringValue('name') ?? '';
     userID.value = _pb.authStore.record?.id ?? '';
@@ -127,7 +114,7 @@ class AppStateController extends GetxController {
   }
 
   Future<void> createPhotoToAlbum(String? albumId, PlatformFile file) async {
-    logger.d('开始上传: ${file.name} to album: $albumId');
+    _logger.d('开始上传: ${file.name} to album: $albumId');
     final userID = getUserID();
     if (userID == null) {
       throw Exception('获取用户ID失败');
@@ -151,7 +138,7 @@ class AppStateController extends GetxController {
         final fstream = fd.openRead();
         hash = await sha512.bind(fstream).first;
       }
-      logger.d('文件hash: $hash');
+      _logger.d('文件hash: $hash');
 
       final f = http.MultipartFile(
         'content',
@@ -188,7 +175,7 @@ class AppStateController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 500));
     } catch (e) {
       uploadStatus.value = '上传失败: ${file.name}';
-      logger.e('上传失败: $e');
+      _logger.e('上传失败: $e');
       rethrow;
     } finally {
       // 清除上传状态
@@ -258,7 +245,7 @@ class AppStateController extends GetxController {
               );
           isFollowed = true;
         } catch (e) {
-          logger.d('未关注');
+          _logger.d('未关注');
         }
         return {
           "id": user.get<String>('id'),
@@ -267,7 +254,7 @@ class AppStateController extends GetxController {
         };
       }).wait;
     } catch (e) {
-      logger.e('搜索用户失败: $e');
+      _logger.e('搜索用户失败: $e');
       return [];
     }
   }
@@ -321,7 +308,7 @@ class AppStateController extends GetxController {
 
   Future<bool> isShared(String albumID, String userID) async {
     try {
-      logger.d(
+      _logger.d(
         'album.id = "$albumID" && (readers.id ?= "$userID" || writers.id ?= "$userID")',
       );
       await _pb
@@ -331,20 +318,20 @@ class AppStateController extends GetxController {
           );
       return true;
     } catch (e) {
-      logger.d('here $e');
+      _logger.d('here $e');
       return false;
     }
   }
 
   Future<void> shareAlbum(String albumID, String userID, bool isWriter) async {
-    logger.d('shareAlbum $albumID $userID $isWriter');
+    _logger.d('shareAlbum $albumID $userID $isWriter');
     RecordModel? ap;
     try {
       ap = await _pb
           .collection('album_permissions')
           .getFirstListItem("album.id = '$albumID'");
     } catch (e) {
-      logger.d('创建权限');
+      _logger.d('创建权限');
       await _pb
           .collection('album_permissions')
           .create(
