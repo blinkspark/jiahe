@@ -24,6 +24,18 @@ class _DrivePageState extends State<DrivePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomSheet: Obx(
+        () => driveController.uploading.value
+            ? SizedBox(
+                height: 100,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: driveController.uploadProgress.value,
+                  ),
+                ),
+              )
+            : SizedBox(),
+      ),
       appBar: AppBar(
         title: Obx(() => Text('网盘 ${driveController.currentPath}')),
         centerTitle: true,
@@ -103,7 +115,11 @@ class _DrivePageState extends State<DrivePage> {
                         : Icon(Icons.insert_drive_file_outlined),
                     trailing: PopupMenuButton(
                       onSelected: (value) {
-                        logger.d(value);
+                        switch (value) {
+                          case "delete":
+                            driveController.deleteObject(item['id']);
+                            break;
+                        }
                       },
                       itemBuilder: (ctx) {
                         return [

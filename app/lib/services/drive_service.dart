@@ -71,7 +71,7 @@ class DriveService extends GetxService {
   }
 
   Future<void> createObject(String path, String name, int size) async {
-    var key = [path,name].join("/");
+    var key = [path, name].join("/");
     if (key.startsWith("//")) {
       key = key.substring(1);
     }
@@ -91,5 +91,9 @@ class DriveService extends GetxService {
             "size": size,
           },
         );
+  }
+
+  Future<void> deleteObject(String id) async {
+    await pb.collection("objects").delete(id);
   }
 }
