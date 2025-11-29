@@ -11,6 +11,9 @@ class DriveController extends GetxController {
   final Logger logger = Get.find();
   final isFetching = false.obs;
 
+  final uploading = false.obs;
+  final uploadProgress = 0.0.obs;
+
   Future<void> fetchObjects(String path) async {
     isFetching.value = true;
     try {
@@ -46,7 +49,9 @@ class DriveController extends GetxController {
   }
 
   Future<void> uploadFiles(List<PlatformFile> files) async {
-    for (var file in files) {
+    uploading.value = true;
+    for (var i = 0; i < files.length; i++) {
+      final file = files[i];
       final url = await driveService.getUploadUrl(currentPath.value, file.name);
 
       logger.d(url);
@@ -63,6 +68,7 @@ class DriveController extends GetxController {
           ),
           onSendProgress: (count, total) {
             logger.d("$count/$total");
+            uploadProgress.value = count / total;
           },
         );
         await driveService.createObject(
@@ -73,6 +79,27 @@ class DriveController extends GetxController {
       } catch (e) {
         logger.e(e);
       }
+    }
+    uploading.value = false;
+    try {
+      logger.d("refresh object list");
+      await fetchObjects(currentPath.value);
+    } on Exception catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<void> deleteObject(String id) async {
+    try {
+      await driveService.deleteObject(id);
+    } catch (e) {
+      logger.e(e);
+      Get.snackbar("删除错误", e.toString());
+    }
+    try {
+      await fetchObjects(currentPath.value);
+    } on Exception catch (e) {
+      logger.e(e);
     }
   }
 }

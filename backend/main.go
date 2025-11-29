@@ -51,18 +51,11 @@ func main() {
 
 		se.Router.GET("/presign/{path}", func(e *core.RequestEvent) error {
 			reqPath := e.Request.PathValue("path")
-			app.Logger().Debug("presign", "path", reqPath)
-			app.Logger().Debug("presign", "bucket", bucket)
-			dir, fname := path.Split(reqPath)
-			app.Logger().Debug("presign", "dir", dir)
-			app.Logger().Debug("presign", "fname", fname)
 			objs, err := app.FindCollectionByNameOrId("objects")
 			if err != nil {
 				return err
 			}
-			app.Logger().Debug("presign", "objs", objs.Id)
 			key := path.Join(objs.Id, e.Auth.Id, reqPath)
-			app.Logger().Debug("presign", "key", key)
 
 			res, err := ossClient.Presign(context.Background(), &oss.PutObjectRequest{
 				Bucket: oss.Ptr(bucket),
@@ -137,6 +130,23 @@ func main() {
 		if err != nil {
 			return err
 		}
+
+		return e.Next()
+	})
+
+	app.OnRecordDelete("objects").BindFunc(func(e *core.RecordEvent) error {
+		key := path.Join(e.Record.Id, e.Record.GetString("owner"), e.Record.GetString("key"))
+		app.Logger().Debug("delete", "key", key)
+
+		res, err := ossClient.DeleteObject(e.Context, &oss.DeleteObjectRequest{
+			Bucket: oss.Ptr(bucket),
+			Key:    oss.Ptr(key),
+		})
+		if err != nil {
+			return err
+		}
+
+		app.Logger().Debug("delete", "res", res)
 
 		return e.Next()
 	})
