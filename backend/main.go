@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"path"
 	"time"
@@ -31,18 +30,24 @@ func main() {
 	bucket := os.Getenv("OSS_BUCKET")
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-		se.Router.GET("/test/{bucket}/{key}", func(e *core.RequestEvent) error {
-			bucket := e.Request.PathValue("bucket")
-			key := e.Request.PathValue("key")
-			decKey, err := url.PathUnescape(key)
+		se.Router.GET("/down_url/{id}", func(e *core.RequestEvent) error {
+			id := e.Request.PathValue("id")
+			app.Logger().Debug("down_url", "id", id)
+			obj, err := app.FindRecordById("objects", id)
 			if err != nil {
 				return err
 			}
+			app.Logger().Debug("down_url", "obj", obj)
+
+			key := obj.GetString("key")
+
+			nkey := path.Join(obj.Collection().Id, e.Auth.Id, key)
+			app.Logger().Debug("down_url", "nkey", nkey)
 			res, err := ossClient.Presign(context.Background(), &oss.GetObjectRequest{
 				Bucket: oss.Ptr(bucket),
-				Key:    oss.Ptr(decKey),
+				Key:    oss.Ptr(nkey),
 			},
-				oss.PresignExpires(time.Hour))
+				oss.PresignExpires(time.Hour*5))
 			if err != nil {
 				return err
 			}
@@ -135,7 +140,7 @@ func main() {
 	})
 
 	app.OnRecordDelete("objects").BindFunc(func(e *core.RecordEvent) error {
-		key := path.Join(e.Record.Id, e.Record.GetString("owner"), e.Record.GetString("key"))
+		key := path.Join(e.Record.Collection().Id, e.Record.GetString("owner"), e.Record.GetString("key"))
 		app.Logger().Debug("delete", "key", key)
 
 		res, err := ossClient.DeleteObject(e.Context, &oss.DeleteObjectRequest{

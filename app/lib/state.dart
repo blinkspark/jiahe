@@ -29,14 +29,10 @@ class AppStateController extends GetxController {
     super.onInit();
     isLogin.value = _pb.authStore.isValid;
     username.value = _pb.authStore.record?.getStringValue('name') ?? '';
-    userID.value = _pb.authStore.record?.id ?? '';
     _pb.authStore.onChange.listen((data) {
       isLogin.value = _pb.authStore.isValid;
       username.value = _pb.authStore.record?.getStringValue('name') ?? '';
-      userID.value = _pb.authStore.record?.id ?? '';
     });
-    userService = UserService(pb: _pb, logger: logger);
-    driveService = DriveService(pb: _pb, logger: logger);
   }
 
   Future<void> login(String email, String password) async {

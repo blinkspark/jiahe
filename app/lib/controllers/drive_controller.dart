@@ -14,6 +14,9 @@ class DriveController extends GetxController {
   final uploading = false.obs;
   final uploadProgress = 0.0.obs;
 
+  final downloading = false.obs;
+  final downloadProgress = 0.0.obs;
+
   Future<void> fetchObjects(String path) async {
     isFetching.value = true;
     try {
@@ -100,6 +103,23 @@ class DriveController extends GetxController {
       await fetchObjects(currentPath.value);
     } on Exception catch (e) {
       logger.e(e);
+    }
+  }
+
+  Future<void> downloadFile(String id, String name) async {
+    try {
+      downloading.value = true;
+      final res = await driveService.downloadFile(id, (count, total) {
+        downloadProgress.value = count / total;
+      });
+      if (res == null) {
+        throw Exception("下载失败");
+      }
+      await FilePicker.platform.saveFile(fileName: name, bytes: res);
+    } catch (e) {
+      logger.e(e);
+    } finally {
+      downloading.value = false;
     }
   }
 }

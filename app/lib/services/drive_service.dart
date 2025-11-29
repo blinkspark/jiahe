@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:app/services/user_service.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -95,5 +98,22 @@ class DriveService extends GetxService {
 
   Future<void> deleteObject(String id) async {
     await pb.collection("objects").delete(id);
+  }
+
+  Future<Uint8List?> downloadFile(
+    String id,
+    Function(int count, int total)? cb,
+  ) async {
+    final encID = Uri.encodeComponent(id);
+    final res = await pb.send<String>("down_url/$encID");
+    logger.d(res);
+    final down = await Dio().get<Uint8List>(
+      res,
+      options: Options(responseType: ResponseType.bytes),
+      onReceiveProgress: (count, total) {
+        cb?.call(count, total);
+      },
+    );
+    return down.data;
   }
 }

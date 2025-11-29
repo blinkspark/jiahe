@@ -24,18 +24,29 @@ class _DrivePageState extends State<DrivePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: Obx(
-        () => driveController.uploading.value
-            ? SizedBox(
-                height: 100,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    value: driveController.uploadProgress.value,
-                  ),
-                ),
-              )
-            : SizedBox(),
-      ),
+      bottomSheet: Obx(() {
+        if (driveController.uploading.value) {
+          return SizedBox(
+            height: 100,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: driveController.uploadProgress.value,
+              ),
+            ),
+          );
+        }
+        if (driveController.downloading.value) {
+          return SizedBox(
+            height: 100,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: driveController.downloadProgress.value,
+              ),
+            ),
+          );
+        }
+        return SizedBox.shrink();
+      }),
       appBar: AppBar(
         title: Obx(() => Text('网盘 ${driveController.currentPath}')),
         centerTitle: true,
@@ -119,6 +130,12 @@ class _DrivePageState extends State<DrivePage> {
                           case "delete":
                             driveController.deleteObject(item['id']);
                             break;
+                          case "download":
+                            driveController.downloadFile(
+                              item['id'],
+                              item['name'],
+                            );
+                            break;
                         }
                       },
                       itemBuilder: (ctx) {
@@ -128,6 +145,13 @@ class _DrivePageState extends State<DrivePage> {
                             child: ListTile(
                               leading: Icon(Icons.delete_outline),
                               title: Text("删除"),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: "download",
+                            child: ListTile(
+                              leading: Icon(Icons.delete_outline),
+                              title: Text("下载"),
                             ),
                           ),
                         ];
