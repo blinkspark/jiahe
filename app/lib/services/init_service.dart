@@ -15,7 +15,7 @@ class InitService extends GetxService {
   Future<InitService> init() async {
     await dotenv.load();
     await GetStorage.init();
-    storage = GetStorage();
+    storage = Get.put(GetStorage());
     authStore = Get.put(
       AsyncAuthStore(
         save: (String data) async => storage.write('pb_auth', data),

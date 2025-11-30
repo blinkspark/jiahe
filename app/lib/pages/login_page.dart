@@ -1,20 +1,45 @@
+import 'package:app/controllers/global_state_controller.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/web.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final appState = Get.find<AppStateController>();
+
   final logger = Get.find<Logger>();
+
+  final globalState = Get.put(GlobalStateController());
+
   final isRegister = false.obs;
+
   final isLoading = false.obs;
+
   final email = TextEditingController();
+
   final password = TextEditingController();
+
   final confirmPassword = TextEditingController();
-  LoginPage({super.key});
+
+  @override
+  void initState() {
+    super.initState();
+    // 获取用户名
+    email.text = globalState.email.value;
+  }
 
   Future<void> login() async {
     try {
+      if (globalState.rememberMe.value) {
+        globalState.setEmail(email.text);
+      }
       await appState.login(email.text, password.text);
       Get.offAllNamed('/');
     } catch (e) {
@@ -88,6 +113,17 @@ class LoginPage extends StatelessWidget {
               ),
             ),
 
+            // Remember Me
+            Obx(
+              () => CheckboxListTile(
+                title: const Text('记住我'),
+                value: globalState.rememberMe.value,
+                onChanged: (value) {
+                  globalState.toggleRememberMe();
+                },
+              ),
+            ),
+
             // 确认密码输入框（仅在注册模式显示）
             Obx(
               () => isRegister.value
@@ -150,10 +186,7 @@ class LoginPage extends StatelessWidget {
                   return const SizedBox(
                     height: 16,
                     width: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   );
                 }
                 return Text(
