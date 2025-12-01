@@ -104,9 +104,7 @@ class DriveService extends GetxService {
     String id,
     Function(int count, int total)? cb,
   ) async {
-    final encID = Uri.encodeComponent(id);
-    final res = await pb.send<String>("down_url/$encID");
-    logger.d(res);
+    final res = await getDownloadUrl(id);
     final down = await Dio().get<Uint8List>(
       res,
       options: Options(responseType: ResponseType.bytes),

@@ -225,10 +225,11 @@ class _DrivePageState extends State<DrivePage> {
           }
           return false;
         }).toList();
+        final index = pics.indexWhere((element) => element['id'] == item['id']);
         Get.to(
           () => PhotoViewPage(
             photos: pics.obs,
-            index: pics.indexWhere((element) => element['id'] == item['id']),
+            index: index >= 0 ? index : 0,
             isNew: true,
           ),
         );

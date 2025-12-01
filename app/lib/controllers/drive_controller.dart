@@ -64,13 +64,10 @@ class DriveController extends GetxController {
           data: file.readStream!,
           options: Options(
             headers: {
-              // "Content-Type": "application/octet-stream",
               "Content-Length": file.size,
             },
-            // responseType: ResponseType.plain,
           ),
           onSendProgress: (count, total) {
-            logger.d("$count/$total");
             uploadProgress.value = count / total;
           },
         );
