@@ -1,5 +1,6 @@
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 
 class MePage extends StatelessWidget {
@@ -23,37 +24,39 @@ class MePage extends StatelessWidget {
                     Text('Is LogIn: ${appState.isLogin} ${appState.username}'),
               ),
               Obx(
-                () => !appState.isLogin.value ? ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed('/login');
-                  },
-                  child: Text('登录'),
-                ) : ElevatedButton(
-                  onPressed: () async {
-                    final res = await Get.dialog<bool>(
-                      AlertDialog(
-                        title: Text('提示'),
-                        content: Text('确定要注销吗？'),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Get.back(result: false);
-                            },
-                            child: Text('取消'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Get.back(result: true);
-                            },
-                            child: Text('确定'),
-                          ),
-                        ],
+                () => !appState.isLogin.value
+                    ? ElevatedButton(
+                        onPressed: () {
+                          Get.toNamed('/login');
+                        },
+                        child: Text('登录'),
+                      )
+                    : ElevatedButton(
+                        onPressed: () async {
+                          final res = await Get.dialog<bool>(
+                            AlertDialog(
+                              title: Text('提示'),
+                              content: Text('确定要注销吗？'),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Get.back(result: false);
+                                  },
+                                  child: Text('取消'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Get.back(result: true);
+                                  },
+                                  child: Text('确定'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (res == true) appState.logout();
+                        },
+                        child: Text('注销'),
                       ),
-                    );
-                    if (res == true) appState.logout();
-                  },
-                  child: Text('注销'),
-                ),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -72,6 +75,23 @@ class MePage extends StatelessWidget {
                   Get.changeThemeMode(ThemeMode.dark);
                 },
                 child: Text('暗主题'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Get.changeThemeMode(ThemeMode.system);
+                },
+                child: Text('跟随系统'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await DefaultCacheManager().emptyCache();
+                  } catch (e) {
+                    Get.snackbar('错误', e.toString());
+                  }
+                  Get.snackbar('提示', '清除缓存成功');
+                },
+                child: Text('清除缓存'),
               ),
             ],
           ),

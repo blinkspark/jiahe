@@ -174,6 +174,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                     builder: (context, index) => PhotoViewGalleryPageOptions(
                       imageProvider: CachedNetworkImageProvider(
                         widget.photos[index]['url'].toString(),
+                        cacheKey: widget.photos[index]['id'],
                       ),
                       controller: getPhotoController(index),
                       filterQuality: FilterQuality.medium,
