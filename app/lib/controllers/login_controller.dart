@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-class GlobalStateController extends GetxController {
+class LoginController extends GetxController {
   final rememberMe = false.obs;
   final email = ''.obs;
   final store = Get.find<GetStorage>();

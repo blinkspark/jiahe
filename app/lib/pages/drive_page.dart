@@ -65,7 +65,7 @@ class _DrivePageState extends State<DrivePage> {
               if (splitedPath.length > 1) {
                 var newPath = path.substring(0, path.lastIndexOf('/'));
                 newPath = newPath.isEmpty ? '/' : newPath;
-                driveController.changePath(newPath);
+                driveController.changeCurrentPath(newPath);
               }
             },
             icon: Icon(Icons.arrow_upward),
@@ -147,13 +147,14 @@ class _DrivePageState extends State<DrivePage> {
                               title: Text("删除"),
                             ),
                           ),
-                          PopupMenuItem(
-                            value: "download",
-                            child: ListTile(
-                              leading: Icon(Icons.delete_outline),
-                              title: Text("下载"),
+                          if (item["type"] != "folder")
+                            PopupMenuItem(
+                              value: "download",
+                              child: ListTile(
+                                leading: Icon(Icons.delete_outline),
+                                title: Text("下载"),
+                              ),
                             ),
-                          ),
                         ];
                       },
                     ),
@@ -162,9 +163,12 @@ class _DrivePageState extends State<DrivePage> {
                           ? item['display_name']
                           : item['name'],
                     ),
+                    subtitle: item["type"] == "file"
+                        ? Text(displaySize(item['size']))
+                        : null,
                     onTap: () {
                       if (item["type"] == "folder") {
-                        driveController.changePath(item['name']);
+                        driveController.changeCurrentPath(item['name']);
                       }
                     },
                   );
@@ -172,5 +176,20 @@ class _DrivePageState extends State<DrivePage> {
               ),
       ),
     );
+  }
+
+  // 显示可阅读的文件大小
+  String displaySize(int size) {
+    if (size < 1024) {
+      return "${size}B";
+    } else if (size < 1024 * 1024) {
+      return "${(size / 1024).toStringAsFixed(2)}KB";
+    } else if (size < 1024 * 1024 * 1024) {
+      return "${(size / 1024 / 1024).toStringAsFixed(2)}MB";
+    } else if (size < 1024 * 1024 * 1024 * 1024) {
+      return "${(size / 1024 / 1024 / 1024).toStringAsFixed(2)}GB";
+    } else {
+      return "${(size / 1024 / 1024 / 1024 / 1024).toStringAsFixed(2)}TB";
+    }
   }
 }

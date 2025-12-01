@@ -18,8 +18,8 @@ class DriveService extends GetxService {
     return res.map((item) {
       if (item.getStringValue("type") == "folder") {
         final name = item.getStringValue("name");
-        final endName = name.split("/").last;
-        item.data["display_name"] = endName;
+        final displayName = name.split("/").last;
+        item.data["display_name"] = displayName;
       }
       return item.data;
     }).toList();

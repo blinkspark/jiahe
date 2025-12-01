@@ -33,7 +33,7 @@ class DriveController extends GetxController {
     }
   }
 
-  Future<void> changePath(String path) async {
+  Future<void> changeCurrentPath(String path) async {
     currentPath.value = path;
     await fetchObjects(path);
   }

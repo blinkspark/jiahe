@@ -1,4 +1,4 @@
-import 'package:app/controllers/global_state_controller.dart';
+import 'package:app/controllers/login_controller.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final logger = Get.find<Logger>();
 
-  final globalState = Get.put(GlobalStateController());
+  final loginController = Get.put(LoginController());
 
   final isRegister = false.obs;
 
@@ -32,13 +32,13 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     // 获取用户名
-    email.text = globalState.email.value;
+    email.text = loginController.email.value;
   }
 
   Future<void> login() async {
     try {
-      if (globalState.rememberMe.value) {
-        globalState.setEmail(email.text);
+      if (loginController.rememberMe.value) {
+        loginController.setEmail(email.text);
       }
       await appState.login(email.text, password.text);
       Get.offAllNamed('/');
@@ -117,9 +117,9 @@ class _LoginPageState extends State<LoginPage> {
             Obx(
               () => CheckboxListTile(
                 title: const Text('记住我'),
-                value: globalState.rememberMe.value,
+                value: loginController.rememberMe.value,
                 onChanged: (value) {
-                  globalState.toggleRememberMe();
+                  loginController.toggleRememberMe();
                 },
               ),
             ),
