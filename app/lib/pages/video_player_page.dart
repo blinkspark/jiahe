@@ -1,5 +1,6 @@
 import 'package:app/controllers/video_player_controller.dart';
 import 'package:app/services/drive_service.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -31,10 +32,10 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     videos = widget.videos.obs;
     logger.d(index.value);
     logger.d(videos.toJson());
-    pinit();
+    playerInit();
   }
 
-  Future<void> pinit() async {
+  Future<void> playerInit() async {
     loading.value = true;
     try {
       videos.value = await videos.map((e) async {
@@ -45,7 +46,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         Uri.parse(videos[index.value]['url']),
       );
       await vpController.initialize();
-      vpController.play();
     } catch (e) {
       logger.e(e);
       Get.snackbar("Error", e.toString());
@@ -64,7 +64,27 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
       body: Obx(() {
         return loading.value
             ? const Center(child: CircularProgressIndicator())
-            : Center(child: vp.VideoPlayer(vpController));
+            : Listener(
+                onPointerSignal: (event) {
+                  if (event is PointerScrollEvent) {
+                    final volume = vpController.value.volume;
+                    vpController.setVolume(
+                      volume + -event.scrollDelta.dy / 1000,
+                    );
+                  }
+                  // final volume = vpController.value.volume;
+                  // logger.d(volume);
+                  // vpController.setVolume(volume - 0.1);
+                },
+                onPointerDown: (e) {
+                  if (e.buttons == 1) {
+                    vpController.value.isPlaying
+                        ? vpController.pause()
+                        : vpController.play();
+                  }
+                },
+                child: vp.VideoPlayer(vpController),
+              );
       }),
     );
   }
