@@ -1,4 +1,5 @@
 import 'package:app/controllers/drive_controller.dart';
+import 'package:app/pages/photo_view_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -55,6 +56,7 @@ class _DrivePageState extends State<DrivePage> {
             onPressed: () {
               driveController.fetchObjects(driveController.currentPath.value);
             },
+            tooltip: "刷新",
             icon: Icon(Icons.refresh),
           ),
           IconButton(
@@ -68,6 +70,7 @@ class _DrivePageState extends State<DrivePage> {
                 driveController.changeCurrentPath(newPath);
               }
             },
+            tooltip: "上级目录",
             icon: Icon(Icons.arrow_upward),
           ),
           IconButton(
@@ -96,12 +99,14 @@ class _DrivePageState extends State<DrivePage> {
                 ),
               );
             },
+            tooltip: '新建文件夹',
             icon: Icon(Icons.create_new_folder),
           ),
           IconButton(
             onPressed: () async {
               final res = await FilePicker.platform.pickFiles(
                 type: FileType.any,
+                allowMultiple: true,
                 withReadStream: true,
                 // withData: true,
               );
@@ -109,6 +114,7 @@ class _DrivePageState extends State<DrivePage> {
               if (res == null) return;
               driveController.uploadFiles(res.files);
             },
+            tooltip: '上传文件',
             icon: Icon(Icons.upload_file),
           ),
         ],
@@ -121,14 +127,39 @@ class _DrivePageState extends State<DrivePage> {
                 itemBuilder: (context, index) {
                   final item = driveController.objectList[index];
                   return ListTile(
-                    leading: item["type"] == "folder"
-                        ? Icon(Icons.folder)
-                        : Icon(Icons.insert_drive_file_outlined),
+                    leading: Icon(getIcon(item['type'], item['name'])),
                     trailing: PopupMenuButton(
-                      onSelected: (value) {
+                      onSelected: (value) async {
                         switch (value) {
                           case "delete":
-                            driveController.deleteObject(item['id']);
+                            final res = await Get.dialog(
+                              AlertDialog(
+                                title: Text('确认'),
+                                content: Text('确定删除吗？'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.back(result: false);
+                                    },
+                                    child: Text('取消'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.back(result: true);
+                                    },
+                                    child: Text(
+                                      '确定',
+                                      style: TextStyle(
+                                        color: Get.theme.colorScheme.error,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (res == true) {
+                              driveController.deleteObject(item['id']);
+                            }
                             break;
                           case "download":
                             driveController.downloadFile(
@@ -169,6 +200,8 @@ class _DrivePageState extends State<DrivePage> {
                     onTap: () {
                       if (item["type"] == "folder") {
                         driveController.changeCurrentPath(item['name']);
+                      } else {
+                        onFileTap(item);
                       }
                     },
                   );
@@ -176,6 +209,61 @@ class _DrivePageState extends State<DrivePage> {
               ),
       ),
     );
+  }
+
+  void onFileTap(Map<String, dynamic> item) async {
+    final ext = item['name'].split('.').last;
+    switch (ext) {
+      case "png":
+      case "jpg":
+      case "jpeg":
+      case "gif":
+        final pics = driveController.objectList.where((obj) {
+          final ext = obj['name'].split('.').last;
+          if (["png", "jpg", "jpeg", "gif"].contains(ext)) {
+            return true;
+          }
+          return false;
+        }).toList();
+        Get.to(
+          () => PhotoViewPage(
+            photos: pics.obs,
+            index: pics.indexWhere((element) => element['id'] == item['id']),
+            isNew: true,
+          ),
+        );
+        break;
+    }
+  }
+
+  IconData getIcon(String type, String name) {
+    if (type == "folder") {
+      return Icons.folder_outlined;
+    } else {
+      final ext = name.split('.').last;
+      switch (ext) {
+        case "png":
+        case "jpg":
+        case "jpeg":
+        case "gif":
+          return Icons.image;
+        case "mp4":
+        case "mkv":
+        case "avi":
+        case "mov":
+          return Icons.video_collection;
+        case "mp3":
+        case "wav":
+        case "flac":
+          return Icons.audio_file;
+        case "pdf":
+          return Icons.picture_as_pdf;
+        case "txt":
+          return Icons.text_snippet;
+        default:
+          return Icons.insert_drive_file;
+      }
+    }
   }
 
   // 显示可阅读的文件大小

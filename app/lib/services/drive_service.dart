@@ -116,4 +116,10 @@ class DriveService extends GetxService {
     );
     return down.data;
   }
+
+  Future<String> getDownloadUrl(String id) async {
+    final encID = Uri.encodeComponent(id);
+    final res = await pb.send<String>("down_url/$encID");
+    return res;
+  }
 }
