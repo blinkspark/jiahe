@@ -255,8 +255,9 @@ class _DrivePageState extends State<DrivePage> {
       }
       return false;
     }).toList();
+    final index = videos.indexWhere((element) => element['id'] == item['id']);
     logger.d(videos);
-    Get.to(VideoPlayerPage());
+    Get.to(VideoPlayerPage(videos: videos, index: index > 0 ? index : 0));
   }
 
   IconData getIcon(String type, String name) {
