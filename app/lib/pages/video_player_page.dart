@@ -30,8 +30,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     super.initState();
     index = widget.index.obs;
     videos = widget.videos.obs;
-    logger.d(index.value);
-    logger.d(videos.toJson());
     playerInit();
   }
 
@@ -46,6 +44,9 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         Uri.parse(videos[index.value]['url']),
       );
       await vpController.initialize();
+      vpController.addListener((){
+
+      });
     } catch (e) {
       logger.e(e);
       Get.snackbar("Error", e.toString());
