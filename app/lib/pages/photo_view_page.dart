@@ -47,6 +47,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
     HardwareKeyboard.instance.addHandler(handleKeys);
     pageController = PageController(initialPage: widget.index);
     index.value = widget.index;
+    name.value = widget.photos[widget.index]['name'];
     if (widget.isNew) {
       loading.value = true;
       widget.photos
@@ -127,6 +128,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       duration: Duration(milliseconds: 200),
       curve: Curves.easeIn,
     );
+    name.value = widget.photos[page - 1]['name'];
   }
 
   void _nextImage() {
@@ -139,6 +141,8 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       duration: Duration(milliseconds: 200),
       curve: Curves.easeIn,
     );
+
+    name.value = widget.photos[page + 1]['name'];
   }
 
   bool _shouldShowNavigationButtons() {
@@ -150,7 +154,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
-        appBar: AppBar(title: Text(name.value)),
+        appBar: AppBar(title: Text(name.value), centerTitle: true),
         body: loading.value
             ? CircularProgressIndicator()
             : Stack(

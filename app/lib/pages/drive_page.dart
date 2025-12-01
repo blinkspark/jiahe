@@ -218,23 +218,27 @@ class _DrivePageState extends State<DrivePage> {
       case "jpg":
       case "jpeg":
       case "gif":
-        final pics = driveController.objectList.where((obj) {
-          final ext = obj['name'].split('.').last;
-          if (["png", "jpg", "jpeg", "gif"].contains(ext)) {
-            return true;
-          }
-          return false;
-        }).toList();
-        final index = pics.indexWhere((element) => element['id'] == item['id']);
-        Get.to(
-          () => PhotoViewPage(
-            photos: pics.obs,
-            index: index >= 0 ? index : 0,
-            isNew: true,
-          ),
-        );
+        onPicTap(item);
         break;
     }
+  }
+
+  void onPicTap(Map<String, dynamic> item) {
+    final pics = driveController.objectList.where((obj) {
+      final ext = obj['name'].split('.').last;
+      if (["png", "jpg", "jpeg", "gif"].contains(ext)) {
+        return true;
+      }
+      return false;
+    }).toList();
+    final index = pics.indexWhere((element) => element['id'] == item['id']);
+    Get.to(
+      () => PhotoViewPage(
+        photos: pics.obs,
+        index: index >= 0 ? index : 0,
+        isNew: true,
+      ),
+    );
   }
 
   IconData getIcon(String type, String name) {
