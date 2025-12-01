@@ -1,5 +1,6 @@
 import 'package:app/controllers/drive_controller.dart';
 import 'package:app/pages/photo_view_page.dart';
+import 'package:app/pages/video_player_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -220,6 +221,11 @@ class _DrivePageState extends State<DrivePage> {
       case "gif":
         onPicTap(item);
         break;
+      case "mp4":
+      case "mkv":
+      case "avi":
+      case "mov":
+        onVideoTap(item);
     }
   }
 
@@ -233,12 +239,24 @@ class _DrivePageState extends State<DrivePage> {
     }).toList();
     final index = pics.indexWhere((element) => element['id'] == item['id']);
     Get.to(
-      () => PhotoViewPage(
+      PhotoViewPage(
         photos: pics.obs,
         index: index >= 0 ? index : 0,
         isNew: true,
       ),
     );
+  }
+
+  void onVideoTap(Map<String, dynamic> item) {
+    final videos = driveController.objectList.where((obj) {
+      final ext = obj['name'].split('.').last;
+      if (["mp4", "mkv", "avi", "mov"].contains(ext)) {
+        return true;
+      }
+      return false;
+    }).toList();
+    logger.d(videos);
+    Get.to(VideoPlayerPage());
   }
 
   IconData getIcon(String type, String name) {
