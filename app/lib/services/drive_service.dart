@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:uuid/v4.dart';
 
 class DriveService extends GetxService {
   final Logger logger = Get.find();
@@ -57,12 +58,9 @@ class DriveService extends GetxService {
         );
   }
 
-  Future<String> getUploadUrl(String path, String name) async {
-    var nPath = "$path/$name";
-    if (nPath.startsWith("//")) {
-      nPath = nPath.substring(1);
-    }
-    logger.d("nPath $nPath");
+  Future<String> getUploadUrl(String path, String uuid, String name) async {
+    var nPath = "$path/$uuid/$name";
+    nPath = nPath.replaceAll("//", "/");
 
     final encoded = Uri.encodeComponent(nPath);
     logger.d("encoded $encoded");
@@ -73,11 +71,14 @@ class DriveService extends GetxService {
     return res;
   }
 
-  Future<void> createObject(String path, String name, int size) async {
-    var key = [path, name].join("/");
-    if (key.startsWith("//")) {
-      key = key.substring(1);
-    }
+  Future<void> createObject(
+    String path,
+    String uuid,
+    String name,
+    int size,
+  ) async {
+    var key = [path, uuid, name].join("/");
+    key = key.replaceAll("//", "/");
     final parent = await pb
         .collection("objects")
         .getFirstListItem("name = '$path'");
@@ -123,6 +124,19 @@ class DriveService extends GetxService {
 
   Future<void> renameObject(String id, String name) async {
     await pb.collection("objects").getOne(id);
-    await pb.collection("objects").update(id,body: {"name": name});
+    await pb.collection("objects").update(id, body: {"name": name});
+  }
+
+  Future<void> moveObject(String id, String path) async {
+    final parent = await pb
+        .collection("objects")
+        .getFirstListItem("name = '$path'");
+    final object = await pb.collection("objects").getOne(id);
+    var key = [path, object.getStringValue("name")].join("/");
+    key = key.replaceAll("//", "/");
+
+    await pb
+        .collection("objects")
+        .update(id, body: {"parent": parent.id, 'key': key});
   }
 }

@@ -197,6 +197,13 @@ class _DrivePageState extends State<DrivePage> {
                                 ],
                               ),
                             );
+                            break;
+                          case 'move':
+                            driveController.moveObject(
+                              item['id'],
+                              "/test",
+                            );
+                            break;
                         }
                       },
                       itemBuilder: (ctx) {
@@ -213,6 +220,13 @@ class _DrivePageState extends State<DrivePage> {
                             child: ListTile(
                               leading: Icon(Icons.delete_outline),
                               title: Text("重命名"),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: "move",
+                            child: ListTile(
+                              leading: Icon(Icons.delete_outline),
+                              title: Text("移动"),
                             ),
                           ),
                           if (item["type"] != "folder")

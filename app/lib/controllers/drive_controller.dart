@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:uuid/v4.dart';
 
 class DriveController extends GetxController {
   final currentPath = '/'.obs;
@@ -55,7 +56,12 @@ class DriveController extends GetxController {
     uploading.value = true;
     for (var i = 0; i < files.length; i++) {
       final file = files[i];
-      final url = await driveService.getUploadUrl(currentPath.value, file.name);
+      final uuid = UuidV4().generate();
+      final url = await driveService.getUploadUrl(
+        currentPath.value,
+        uuid,
+        file.name,
+      );
 
       logger.d(url);
       try {
@@ -69,6 +75,7 @@ class DriveController extends GetxController {
         );
         await driveService.createObject(
           currentPath.value,
+          uuid,
           file.name,
           file.size,
         );
@@ -122,6 +129,15 @@ class DriveController extends GetxController {
     } catch (e) {
       logger.e(e);
       Get.snackbar("重命名错误", e.toString());
+    }
+  }
+
+  Future<void> moveObject(String id, String path) async {
+    try {
+      await driveService.moveObject(id, path);
+    } catch (e) {
+      logger.e(e);
+      Get.snackbar("移动错误", e.toString());
     }
   }
 }
