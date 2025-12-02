@@ -137,6 +137,6 @@ class DriveService extends GetxService {
 
     await pb
         .collection("objects")
-        .update(id, body: {"parent": parent.id, 'key': key});
+        .update(id, body: {"parent": parent.id});
   }
 }
