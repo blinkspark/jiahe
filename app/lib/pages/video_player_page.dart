@@ -4,7 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:video_player/video_player.dart' as vp;
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 
 class VideoPlayerPage extends StatefulWidget {
   final List<Map<String, dynamic>> videos;
@@ -20,7 +21,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   final DriveService driveService = Get.put(DriveService());
 
   final Logger logger = Get.find();
-  late final vp.VideoPlayerController vpController;
+  final Player player = Player();
+  late final VideoController mkController = VideoController(player);
   late final RxInt index;
   late final RxList<Map<String, dynamic>> videos;
   final loading = true.obs;
@@ -33,6 +35,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     playerInit();
   }
 
+  @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
+  }
+
   Future<void> playerInit() async {
     loading.value = true;
     try {
@@ -40,13 +48,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         e['url'] = await driveService.getDownloadUrl(e['id']);
         return e;
       }).wait;
-      vpController = vp.VideoPlayerController.networkUrl(
-        Uri.parse(videos[index.value]['url']),
-      );
-      await vpController.initialize();
-      vpController.addListener((){
-
-      });
+      await player.open(Media(videos[index.value]['url']));
     } catch (e) {
       logger.e(e);
       Get.snackbar("Error", e.toString());
@@ -68,23 +70,16 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
             : Listener(
                 onPointerSignal: (event) {
                   if (event is PointerScrollEvent) {
-                    final volume = vpController.value.volume;
-                    vpController.setVolume(
-                      volume + -event.scrollDelta.dy / 1000,
-                    );
+                    logger.d("delta: ${event.scrollDelta.dy}");
+                    final volume = player.state.volume;
+                    player.setVolume(volume + -event.scrollDelta.dy / 100);
+                    logger.d("volume: ${player.state.volume}");
                   }
                   // final volume = vpController.value.volume;
                   // logger.d(volume);
                   // vpController.setVolume(volume - 0.1);
                 },
-                onPointerDown: (e) {
-                  if (e.buttons == 1) {
-                    vpController.value.isPlaying
-                        ? vpController.pause()
-                        : vpController.play();
-                  }
-                },
-                child: vp.VideoPlayer(vpController),
+                child: Video(controller: mkController),
               );
       }),
     );
