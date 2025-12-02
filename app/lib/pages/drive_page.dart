@@ -168,6 +168,35 @@ class _DrivePageState extends State<DrivePage> {
                               item['name'],
                             );
                             break;
+                          case "rename":
+                            final nameController = TextEditingController();
+                            nameController.text = item['name'];
+                            await Get.dialog(
+                              AlertDialog(
+                                title: Text('重命名'),
+                                content: TextField(controller: nameController),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.back();
+                                    },
+                                    child: Text('取消'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      logger.d(nameController.text);
+                                      Get.back();
+                                      await driveController.renameObject(
+                                        item['id'],
+                                        nameController.text,
+                                      );
+                                      refresh();
+                                    },
+                                    child: Text('确定'),
+                                  ),
+                                ],
+                              ),
+                            );
                         }
                       },
                       itemBuilder: (ctx) {
@@ -177,6 +206,13 @@ class _DrivePageState extends State<DrivePage> {
                             child: ListTile(
                               leading: Icon(Icons.delete_outline),
                               title: Text("删除"),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: "rename",
+                            child: ListTile(
+                              leading: Icon(Icons.delete_outline),
+                              title: Text("重命名"),
                             ),
                           ),
                           if (item["type"] != "folder")
@@ -302,5 +338,9 @@ class _DrivePageState extends State<DrivePage> {
     } else {
       return "${(size / 1024 / 1024 / 1024 / 1024).toStringAsFixed(2)}TB";
     }
+  }
+
+  Future<void> refresh() async {
+    await driveController.fetchObjects(driveController.currentPath.value);
   }
 }

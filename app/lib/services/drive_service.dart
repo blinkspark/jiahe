@@ -120,4 +120,9 @@ class DriveService extends GetxService {
     final res = await pb.send<String>("down_url/$encID");
     return res;
   }
+
+  Future<void> renameObject(String id, String name) async {
+    await pb.collection("objects").getOne(id);
+    await pb.collection("objects").update(id,body: {"name": name});
+  }
 }

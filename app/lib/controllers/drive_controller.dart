@@ -62,11 +62,7 @@ class DriveController extends GetxController {
         await Dio().put<String>(
           url,
           data: file.readStream!,
-          options: Options(
-            headers: {
-              "Content-Length": file.size,
-            },
-          ),
+          options: Options(headers: {"Content-Length": file.size}),
           onSendProgress: (count, total) {
             uploadProgress.value = count / total;
           },
@@ -117,6 +113,15 @@ class DriveController extends GetxController {
       logger.e(e);
     } finally {
       downloading.value = false;
+    }
+  }
+
+  Future<void> renameObject(String id, String name) async {
+    try {
+      await driveService.renameObject(id, name);
+    } catch (e) {
+      logger.e(e);
+      Get.snackbar("重命名错误", e.toString());
     }
   }
 }

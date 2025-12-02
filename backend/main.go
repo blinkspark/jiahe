@@ -65,7 +65,7 @@ func main() {
 			res, err := ossClient.Presign(context.Background(), &oss.PutObjectRequest{
 				Bucket: oss.Ptr(bucket),
 				Key:    oss.Ptr(key),
-			}, oss.PresignExpires(time.Minute*10))
+			}, oss.PresignExpires(time.Hour*5))
 			if err != nil {
 				return err
 			}
