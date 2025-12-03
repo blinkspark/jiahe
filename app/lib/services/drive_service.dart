@@ -58,8 +58,8 @@ class DriveService extends GetxService {
         );
   }
 
-  Future<String> getUploadUrl(String path, String uuid, String name) async {
-    var nPath = "$path/$uuid/$name";
+  Future<String> getUploadUrl(String uuid, String name) async {
+    var nPath = "$uuid/$name";
     nPath = nPath.replaceAll("//", "/");
 
     final encoded = Uri.encodeComponent(nPath);

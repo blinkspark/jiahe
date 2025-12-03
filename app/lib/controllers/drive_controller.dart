@@ -60,11 +60,7 @@ class DriveController extends GetxController {
     for (var i = 0; i < files.length; i++) {
       final file = files[i];
       final uuid = UuidV4().generate();
-      final url = await driveService.getUploadUrl(
-        currentPath.value,
-        uuid,
-        file.name,
-      );
+      final url = await driveService.getUploadUrl(uuid, file.name);
 
       try {
         await Dio().put<String>(
