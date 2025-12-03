@@ -18,6 +18,9 @@ class DriveController extends GetxController {
   final downloading = false.obs;
   final downloadProgress = 0.0.obs;
 
+  final allFolders = <String>[].obs;
+  final fetchingFolders = false.obs;
+
   Future<void> fetchObjects(String path) async {
     isFetching.value = true;
     try {
@@ -63,7 +66,6 @@ class DriveController extends GetxController {
         file.name,
       );
 
-      logger.d(url);
       try {
         await Dio().put<String>(
           url,
@@ -118,6 +120,7 @@ class DriveController extends GetxController {
       await FilePicker.platform.saveFile(fileName: name, bytes: res);
     } catch (e) {
       logger.e(e);
+      Get.snackbar("下载错误", e.toString());
     } finally {
       downloading.value = false;
     }
@@ -138,6 +141,19 @@ class DriveController extends GetxController {
     } catch (e) {
       logger.e(e);
       Get.snackbar("移动错误", e.toString());
+    }
+  }
+
+  Future<void> fetchAllFolders() async {
+    try {
+      fetchingFolders.value = true;
+      allFolders.value = await driveService.getAllFolders();
+      logger.d(allFolders);
+    } catch (e) {
+      logger.e(e);
+      Get.snackbar("错误", e.toString());
+    } finally {
+      fetchingFolders.value = false;
     }
   }
 }

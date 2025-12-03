@@ -90,7 +90,6 @@ class _DrivePageState extends State<DrivePage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        logger.d(nameController.text);
                         driveController.createFolder(nameController.text);
                         Get.back();
                       },
@@ -199,9 +198,65 @@ class _DrivePageState extends State<DrivePage> {
                             );
                             break;
                           case 'move':
-                            driveController.moveObject(
-                              item['id'],
-                              "/test",
+                            final moveTarget =
+                                driveController.currentPath.value.obs;
+                            driveController.fetchAllFolders();
+                            await Get.dialog(
+                              AlertDialog(
+                                title: Text('移动'),
+                                content: Obx(
+                                  () => driveController.fetchingFolders.value
+                                      ? CircularProgressIndicator()
+                                      : SizedBox(
+                                          width: 300,
+                                          height: 400,
+                                          child: Obx(
+                                            () => RadioGroup(
+                                              groupValue: moveTarget.value,
+                                              onChanged: (v) =>
+                                                  moveTarget.value = v!,
+                                              child: SizedBox(
+                                                width: 300,
+                                                height: 400,
+                                                child: ListView.builder(
+                                                  itemCount: driveController
+                                                      .allFolders
+                                                      .length,
+                                                  itemBuilder: (context, index) {
+                                                    final folder =
+                                                        driveController
+                                                            .allFolders[index];
+                                                    return RadioListTile(
+                                                      title: Text(folder),
+                                                      value: folder,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.back();
+                                    },
+                                    child: Text('取消'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      Get.back();
+                                      await driveController.moveObject(
+                                        item['id'],
+                                        moveTarget.value,
+                                      );
+                                      refresh();
+                                    },
+                                    child: Text('确定'),
+                                  ),
+                                ],
+                              ),
                             );
                             break;
                         }
@@ -218,14 +273,14 @@ class _DrivePageState extends State<DrivePage> {
                           PopupMenuItem(
                             value: "rename",
                             child: ListTile(
-                              leading: Icon(Icons.delete_outline),
+                              leading: Icon(Icons.text_fields_outlined),
                               title: Text("重命名"),
                             ),
                           ),
                           PopupMenuItem(
                             value: "move",
                             child: ListTile(
-                              leading: Icon(Icons.delete_outline),
+                              leading: Icon(Icons.drive_file_move_outlined),
                               title: Text("移动"),
                             ),
                           ),
@@ -233,7 +288,7 @@ class _DrivePageState extends State<DrivePage> {
                             PopupMenuItem(
                               value: "download",
                               child: ListTile(
-                                leading: Icon(Icons.delete_outline),
+                                leading: Icon(Icons.download_outlined),
                                 title: Text("下载"),
                               ),
                             ),

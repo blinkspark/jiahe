@@ -3,14 +3,15 @@ import 'dart:typed_data';
 import 'package:app/services/user_service.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:pocketbase/pocketbase.dart';
-import 'package:uuid/v4.dart';
 
 class DriveService extends GetxService {
   final Logger logger = Get.find();
   final PocketBase pb = Get.find();
   final UserService userService = Get.put(UserService());
+  final GetStorage cacheStorage = GetStorage('DriveCache');
 
   Future<List<Map<String, dynamic>>> getObjectList(String path) async {
     final res = await pb
@@ -44,7 +45,6 @@ class DriveService extends GetxService {
     final parent = await pb
         .collection("objects")
         .getFirstListItem("name = '$path'");
-    logger.d("parent $parent");
 
     await pb
         .collection("objects")
@@ -117,9 +117,16 @@ class DriveService extends GetxService {
   }
 
   Future<String> getDownloadUrl(String id) async {
+    final data = cacheStorage.read<Map<String, dynamic>>("download_url/$id");
+    if (data != null &&
+        DateTime.parse(data['expires']).isAfter(DateTime.now())) {
+      return data['url'];
+    }
     final encID = Uri.encodeComponent(id);
-    final res = await pb.send<String>("down_url/$encID");
-    return res;
+    final url = await pb.send<String>("down_url/$encID");
+    final expires = DateTime.now().add(Duration(hours: 3)).toIso8601String();
+    cacheStorage.write("download_url/$id", {'url': url, 'expires': expires});
+    return url;
   }
 
   Future<void> renameObject(String id, String name) async {
@@ -135,8 +142,13 @@ class DriveService extends GetxService {
     var key = [path, object.getStringValue("name")].join("/");
     key = key.replaceAll("//", "/");
 
-    await pb
+    await pb.collection("objects").update(id, body: {"parent": parent.id});
+  }
+
+  Future<List<String>> getAllFolders() async {
+    final res = await pb
         .collection("objects")
-        .update(id, body: {"parent": parent.id});
+        .getFullList(filter: "type = 'folder'", sort: "name");
+    return res.map((item) => item.getStringValue("name")).toList();
   }
 }

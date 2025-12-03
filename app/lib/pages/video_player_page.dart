@@ -70,10 +70,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
             : Listener(
                 onPointerSignal: (event) {
                   if (event is PointerScrollEvent) {
-                    logger.d("delta: ${event.scrollDelta.dy}");
                     final volume = player.state.volume;
                     player.setVolume(volume + -event.scrollDelta.dy / 100);
-                    logger.d("volume: ${player.state.volume}");
                   }
                   // final volume = vpController.value.volume;
                   // logger.d(volume);
