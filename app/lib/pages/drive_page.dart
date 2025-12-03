@@ -89,7 +89,7 @@ class _DrivePageState extends State<DrivePage> {
               }
             },
             tooltip: "上级目录",
-            icon: Icon(Icons.arrow_upward),
+            icon: Icon(Icons.u_turn_left),
           ),
           IconButton(
             onPressed: () async {
@@ -144,7 +144,7 @@ class _DrivePageState extends State<DrivePage> {
                 itemBuilder: (context, index) {
                   final item = driveController.objectList[index];
                   return ListTile(
-                    leading: Icon(getIcon(item['type'], item['name'])),
+                    leading: Icon(getIconData(item['type'], item['name'])),
                     trailing: PopupMenuButton(
                       onSelected: (value) async {
                         switch (value) {
@@ -321,12 +321,12 @@ class _DrivePageState extends State<DrivePage> {
                     ),
                     title: Text(
                       item["type"] == "folder"
-                          ? item['display_name']
+                          ? (item['name'] as String).split('/').last
                           : item['name'],
                     ),
                     subtitle: item["type"] == "file"
                         ? Text(displaySize(item['size']))
-                        : null,
+                        : Text('文件夹'),
                     onTap: () {
                       if (item["type"] == "folder") {
                         driveController.changeCurrentPath(item['name']);
@@ -388,7 +388,7 @@ class _DrivePageState extends State<DrivePage> {
     Get.to(VideoPlayerPage(videos: videos, index: index > 0 ? index : 0));
   }
 
-  IconData getIcon(String type, String name) {
+  IconData getIconData(String type, String name) {
     if (type == "folder") {
       return Icons.folder_outlined;
     } else {

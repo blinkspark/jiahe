@@ -18,11 +18,6 @@ class DriveService extends GetxService {
         .collection("objects")
         .getFullList(filter: "parent.name = '$path'", sort: "-type,name");
     return res.map((item) {
-      if (item.getStringValue("type") == "folder") {
-        final name = item.getStringValue("name");
-        final displayName = name.split("/").last;
-        item.data["display_name"] = displayName;
-      }
       return item.data;
     }).toList();
   }
