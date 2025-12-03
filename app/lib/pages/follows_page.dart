@@ -13,7 +13,6 @@ class FollowsPage extends StatelessWidget {
   FollowsPage({super.key});
 
   Future<void> fetchFollows() async {
-    logger.d('开始获取关注列表');
     try {
       follows.value = await appState.fetchFollows();
     } catch (e) {
@@ -23,7 +22,6 @@ class FollowsPage extends StatelessWidget {
   }
 
   Future<void> fetchFollowers() async {
-    logger.d('开始获取关注者列表');
     try {
       followers.value = await appState.fetchFollowers();
     } catch (e) {

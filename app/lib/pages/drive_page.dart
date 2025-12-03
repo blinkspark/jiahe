@@ -30,10 +30,10 @@ class _DrivePageState extends State<DrivePage> {
       bottomSheet: Obx(() {
         if (driveController.uploading.value) {
           return SizedBox(
-            height: 100,
+            height: 130,
             width: Get.width / 2,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
               child: Column(
                 children: [
                   Text(
@@ -48,6 +48,15 @@ class _DrivePageState extends State<DrivePage> {
                   ),
                   LinearProgressIndicator(
                     value: driveController.uploadProgress.value,
+                  ),
+                  SizedBox(height: 8),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        driveController.uploadCancelToken?.cancel();
+                      },
+                      child: Text("取消"),
+                    ),
                   ),
                 ],
               ),

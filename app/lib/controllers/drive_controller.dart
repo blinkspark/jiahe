@@ -19,6 +19,7 @@ class DriveController extends GetxController {
   final uploadBytesCount = 0.obs;
   final uploadBytesTotal = 0.obs;
   final uploadProgress = 0.0.obs;
+  CancelToken? uploadCancelToken;
 
   final downloading = false.obs;
   final downloadProgress = 0.0.obs;
@@ -84,10 +85,12 @@ class DriveController extends GetxController {
       final url = await driveService.getUploadUrl(uuid, file.name);
 
       try {
+        uploadCancelToken = CancelToken();
         await Dio().put<String>(
           url,
           data: file.readStream!,
           options: Options(headers: {"Content-Length": file.size}),
+          cancelToken: uploadCancelToken,
           onSendProgress: (count, total) {
             uploadBytesCount.value = count;
             uploadBytesTotal.value = total;
@@ -102,8 +105,15 @@ class DriveController extends GetxController {
         );
       } catch (e) {
         logger.e(e);
+        Get.snackbar("上传错误", e.toString());
       } finally {
         uploadProgress.value = 0;
+        uploadCancelToken = null;
+        uploadTarget.value = '';
+        uploadCount.value = 0;
+        uploadTotal.value = 0;
+        uploadBytesCount.value = 0;
+        uploadBytesTotal.value = 0;
       }
     }
     uploading.value = false;
