@@ -77,12 +77,11 @@ class DriveService extends GetxService {
     String name,
     int size,
   ) async {
-    var key = [path, uuid, name].join("/");
+    var key = [uuid, name].join("/");
     key = key.replaceAll("//", "/");
     final parent = await pb
         .collection("objects")
         .getFirstListItem("name = '$path'");
-    logger.d("parent $parent");
     await pb
         .collection("objects")
         .create(
@@ -129,20 +128,50 @@ class DriveService extends GetxService {
     return url;
   }
 
-  Future<void> renameObject(String id, String name) async {
+  Future<void> renameObject(
+    String id,
+    String path,
+    String name, {
+    bool isFolder = false,
+  }) async {
     await pb.collection("objects").getOne(id);
-    await pb.collection("objects").update(id, body: {"name": name});
+    if (isFolder) {
+      var newName = "$path/$name";
+      newName = newName.replaceAll("//", "/");
+      await pb.collection("objects").update(id, body: {"name": newName});
+    } else {
+      await pb.collection("objects").update(id, body: {"name": name});
+    }
   }
 
-  Future<void> moveObject(String id, String path) async {
+  Future<void> moveObject(String id, String path, bool isFolder) async {
     final parent = await pb
         .collection("objects")
         .getFirstListItem("name = '$path'");
-    final object = await pb.collection("objects").getOne(id);
-    var key = [path, object.getStringValue("name")].join("/");
-    key = key.replaceAll("//", "/");
 
-    await pb.collection("objects").update(id, body: {"parent": parent.id});
+    if (parent.id == id) {
+      throw Exception("Cannot move folder into itself");
+    }
+
+    if (isFolder) {
+      final self = await pb.collection("objects").getOne(id);
+      final name = self.getStringValue("name");
+      var newName = "$path/$name";
+      newName = newName.replaceAll("//", "/");
+      await pb
+          .collection("objects")
+          .update(id, body: {"parent": parent.id, "name": newName});
+      final children = await pb
+          .collection("objects")
+          .getFullList(filter: "parent.id = '$id'");
+      for (var child in children) {
+        if (child.getStringValue("type") == "folder") {
+          await moveObject(child.id, newName, true);
+        }
+      }
+    } else {
+      await pb.collection("objects").update(id, body: {"parent": parent.id});
+    }
   }
 
   Future<List<String>> getAllFolders() async {
@@ -150,5 +179,17 @@ class DriveService extends GetxService {
         .collection("objects")
         .getFullList(filter: "type = 'folder'", sort: "name");
     return res.map((item) => item.getStringValue("name")).toList();
+  }
+
+  Future<Map<String, dynamic>> getObjectByNameAndFolder(
+    String name,
+    String parentFolder,
+  ) async {
+    return (await pb
+            .collection("objects")
+            .getFirstListItem(
+              "name = '$name' && parent.name = '$parentFolder'",
+            ))
+        .data;
   }
 }

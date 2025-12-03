@@ -47,12 +47,12 @@ func main() {
 				Bucket: oss.Ptr(bucket),
 				Key:    oss.Ptr(nkey),
 			},
-				oss.PresignExpires(time.Hour*5))
+				oss.PresignExpires(time.Hour*3))
 			if err != nil {
 				return err
 			}
 			return e.String(http.StatusOK, res.URL)
-		}).Bind()
+		}).Bind(apis.RequireAuth())
 
 		se.Router.GET("/presign/{path}", func(e *core.RequestEvent) error {
 			reqPath := e.Request.PathValue("path")
@@ -65,7 +65,7 @@ func main() {
 			res, err := ossClient.Presign(context.Background(), &oss.PutObjectRequest{
 				Bucket: oss.Ptr(bucket),
 				Key:    oss.Ptr(key),
-			}, oss.PresignExpires(time.Hour*5))
+			}, oss.PresignExpires(time.Hour*3))
 			if err != nil {
 				return err
 			}

@@ -13,6 +13,11 @@ class DriveController extends GetxController {
   final isFetching = false.obs;
 
   final uploading = false.obs;
+  final uploadTarget = ''.obs;
+  final uploadCount = 0.obs;
+  final uploadTotal = 0.obs;
+  final uploadBytesCount = 0.obs;
+  final uploadBytesTotal = 0.obs;
   final uploadProgress = 0.0.obs;
 
   final downloading = false.obs;
@@ -57,8 +62,24 @@ class DriveController extends GetxController {
 
   Future<void> uploadFiles(List<PlatformFile> files) async {
     uploading.value = true;
+    uploadTotal.value = files.length;
     for (var i = 0; i < files.length; i++) {
+      uploadTarget.value = files[i].name;
+      uploadCount.value = i + 1;
       final file = files[i];
+      var found = false;
+      try {
+        await driveService.getObjectByNameAndFolder(
+          file.name,
+          currentPath.value,
+        );
+        found = true;
+        // ignore: empty_catches
+      } catch (e) {}
+      if (found) {
+        Get.snackbar("错误", "文件已存在，正在跳过");
+        continue;
+      }
       final uuid = UuidV4().generate();
       final url = await driveService.getUploadUrl(uuid, file.name);
 
@@ -68,6 +89,8 @@ class DriveController extends GetxController {
           data: file.readStream!,
           options: Options(headers: {"Content-Length": file.size}),
           onSendProgress: (count, total) {
+            uploadBytesCount.value = count;
+            uploadBytesTotal.value = total;
             uploadProgress.value = count / total;
           },
         );
@@ -79,6 +102,8 @@ class DriveController extends GetxController {
         );
       } catch (e) {
         logger.e(e);
+      } finally {
+        uploadProgress.value = 0;
       }
     }
     uploading.value = false;
@@ -122,18 +147,27 @@ class DriveController extends GetxController {
     }
   }
 
-  Future<void> renameObject(String id, String name) async {
+  Future<void> renameObject(
+    String id,
+    String name, {
+    bool isFolder = false,
+  }) async {
     try {
-      await driveService.renameObject(id, name);
+      await driveService.renameObject(
+        id,
+        currentPath.value,
+        name,
+        isFolder: isFolder,
+      );
     } catch (e) {
       logger.e(e);
       Get.snackbar("重命名错误", e.toString());
     }
   }
 
-  Future<void> moveObject(String id, String path) async {
+  Future<void> moveObject(String id, String path, bool isFolder) async {
     try {
-      await driveService.moveObject(id, path);
+      await driveService.moveObject(id, path, isFolder);
     } catch (e) {
       logger.e(e);
       Get.snackbar("移动错误", e.toString());

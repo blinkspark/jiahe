@@ -1,6 +1,7 @@
 import 'package:app/controllers/drive_controller.dart';
 import 'package:app/pages/photo_view_page.dart';
 import 'package:app/pages/video_player_page.dart';
+import 'package:app/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,9 +31,25 @@ class _DrivePageState extends State<DrivePage> {
         if (driveController.uploading.value) {
           return SizedBox(
             height: 100,
-            child: Center(
-              child: CircularProgressIndicator(
-                value: driveController.uploadProgress.value,
+            width: Get.width / 2,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              child: Column(
+                children: [
+                  Text(
+                    driveController.uploadTarget.value,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    "${driveController.uploadCount.value}/${driveController.uploadTotal.value}",
+                  ),
+                  Text(
+                    "${displaySize(driveController.uploadBytesCount.value)}/${displaySize(driveController.uploadBytesTotal.value)}",
+                  ),
+                  LinearProgressIndicator(
+                    value: driveController.uploadProgress.value,
+                  ),
+                ],
               ),
             ),
           );
@@ -169,7 +186,13 @@ class _DrivePageState extends State<DrivePage> {
                             break;
                           case "rename":
                             final nameController = TextEditingController();
-                            nameController.text = item['name'];
+                            if (item['type'] == 'file') {
+                              nameController.text = item['name'];
+                            } else {
+                              nameController.text = item['name']
+                                  .split('/')
+                                  .last;
+                            }
                             await Get.dialog(
                               AlertDialog(
                                 title: Text('重命名'),
@@ -183,11 +206,11 @@ class _DrivePageState extends State<DrivePage> {
                                   ),
                                   TextButton(
                                     onPressed: () async {
-                                      logger.d(nameController.text);
                                       Get.back();
                                       await driveController.renameObject(
                                         item['id'],
                                         nameController.text,
+                                        isFolder: item['type'] == 'folder',
                                       );
                                       refresh();
                                     },
@@ -250,6 +273,7 @@ class _DrivePageState extends State<DrivePage> {
                                       await driveController.moveObject(
                                         item['id'],
                                         moveTarget.value,
+                                        item['type'] == 'folder',
                                       );
                                       refresh();
                                     },
@@ -391,21 +415,6 @@ class _DrivePageState extends State<DrivePage> {
         default:
           return Icons.insert_drive_file;
       }
-    }
-  }
-
-  // 显示可阅读的文件大小
-  String displaySize(int size) {
-    if (size < 1024) {
-      return "${size}B";
-    } else if (size < 1024 * 1024) {
-      return "${(size / 1024).toStringAsFixed(2)}KB";
-    } else if (size < 1024 * 1024 * 1024) {
-      return "${(size / 1024 / 1024).toStringAsFixed(2)}MB";
-    } else if (size < 1024 * 1024 * 1024 * 1024) {
-      return "${(size / 1024 / 1024 / 1024).toStringAsFixed(2)}GB";
-    } else {
-      return "${(size / 1024 / 1024 / 1024 / 1024).toStringAsFixed(2)}TB";
     }
   }
 
