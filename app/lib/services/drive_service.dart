@@ -95,7 +95,7 @@ class DriveService extends GetxService {
     await pb.collection("objects").delete(id);
   }
 
-  Future<Uint8List?> downloadFile(
+  Future<Uint8List> downloadFile(
     String id,
     Function(int count, int total)? cb,
     CancelToken cancelToken,
@@ -109,7 +109,7 @@ class DriveService extends GetxService {
       },
       cancelToken: cancelToken,
     );
-    return down.data;
+    return down.data!;
   }
 
   Future<String> getDownloadUrl(String id) async {

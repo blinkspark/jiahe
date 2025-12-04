@@ -155,9 +155,6 @@ class DriveController extends GetxController {
         downloadTotal.value = total;
         downloadProgress.value = count / total;
       }, downloadCancelToken!);
-      if (res == null) {
-        throw Exception("下载失败");
-      }
       await FilePicker.platform.saveFile(fileName: name, bytes: res);
     } catch (e) {
       logger.e(e);
