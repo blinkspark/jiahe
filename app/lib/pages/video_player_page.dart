@@ -73,11 +73,11 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                     final volume = player.state.volume;
                     player.setVolume(volume + -event.scrollDelta.dy / 100);
                   }
-                  // final volume = vpController.value.volume;
-                  // logger.d(volume);
-                  // vpController.setVolume(volume - 0.1);
                 },
-                child: Video(controller: mkController),
+                child: Video(
+                  controller: mkController,
+                  filterQuality: FilterQuality.medium,
+                ),
               );
       }),
     );

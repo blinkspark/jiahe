@@ -30,10 +30,10 @@ class _DrivePageState extends State<DrivePage> {
       bottomSheet: Obx(() {
         if (driveController.uploading.value) {
           return SizedBox(
-            height: 130,
+            height: 150,
             width: Get.width / 2,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
               child: Column(
                 children: [
                   Text(
