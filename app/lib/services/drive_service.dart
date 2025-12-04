@@ -98,6 +98,7 @@ class DriveService extends GetxService {
   Future<Uint8List?> downloadFile(
     String id,
     Function(int count, int total)? cb,
+    CancelToken cancelToken,
   ) async {
     final res = await getDownloadUrl(id);
     final down = await Dio().get<Uint8List>(
@@ -106,6 +107,7 @@ class DriveService extends GetxService {
       onReceiveProgress: (count, total) {
         cb?.call(count, total);
       },
+      cancelToken: cancelToken,
     );
     return down.data;
   }

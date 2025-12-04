@@ -31,7 +31,7 @@ class _DrivePageState extends State<DrivePage> {
         if (driveController.uploading.value) {
           return SizedBox(
             height: 150,
-            width: Get.width / 2,
+            width: Get.width / 3 * 2,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
               child: Column(
@@ -65,10 +65,31 @@ class _DrivePageState extends State<DrivePage> {
         }
         if (driveController.downloading.value) {
           return SizedBox(
-            height: 100,
-            child: Center(
-              child: CircularProgressIndicator(
-                value: driveController.downloadProgress.value,
+            height: 130,
+            width: Get.width / 3 * 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: Column(
+                  children: [
+                    Text(driveController.downloadTarget.value),
+                    Text(
+                      "${displaySize(driveController.downloadBytesCount.value)}/${displaySize(driveController.downloadBytesTotal.value)}",
+                    ),
+                    LinearProgressIndicator(
+                      value: driveController.downloadProgress.value,
+                    ),
+                    SizedBox(height: 8),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          driveController.downloadCancelToken?.cancel();
+                        },
+                        child: Text("取消"),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

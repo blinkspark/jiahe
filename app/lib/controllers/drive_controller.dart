@@ -23,6 +23,12 @@ class DriveController extends GetxController {
 
   final downloading = false.obs;
   final downloadProgress = 0.0.obs;
+  final downloadTarget = ''.obs;
+  final downloadCount = 0.obs;
+  final downloadTotal = 0.obs;
+  final downloadBytesCount = 0.obs;
+  final downloadBytesTotal = 0.obs;
+  CancelToken? downloadCancelToken;
 
   final allFolders = <String>[].obs;
   final fetchingFolders = false.obs;
@@ -142,9 +148,13 @@ class DriveController extends GetxController {
   Future<void> downloadFile(String id, String name) async {
     try {
       downloading.value = true;
+      downloadTarget.value = name;
+      downloadCancelToken = CancelToken();
       final res = await driveService.downloadFile(id, (count, total) {
+        downloadBytesCount.value = count;
+        downloadTotal.value = total;
         downloadProgress.value = count / total;
-      });
+      }, downloadCancelToken!);
       if (res == null) {
         throw Exception("下载失败");
       }
@@ -154,6 +164,11 @@ class DriveController extends GetxController {
       Get.snackbar("下载错误", e.toString());
     } finally {
       downloading.value = false;
+      downloadTarget.value = '';
+      downloadCount.value = 0;
+      downloadTotal.value = 0;
+      downloadBytesCount.value = 0;
+      downloadBytesTotal.value = 0;
     }
   }
 
