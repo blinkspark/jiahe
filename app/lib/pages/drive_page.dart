@@ -147,7 +147,7 @@ class _DrivePageState extends State<DrivePage> {
               );
             },
             tooltip: '新建文件夹',
-            icon: Icon(Icons.create_new_folder),
+            icon: Icon(Icons.create_new_folder_outlined),
           ),
           IconButton(
             onPressed: () async {
@@ -162,7 +162,7 @@ class _DrivePageState extends State<DrivePage> {
               driveController.uploadFiles(res.files);
             },
             tooltip: '上传文件',
-            icon: Icon(Icons.upload_file),
+            icon: Icon(Icons.upload_file_outlined),
           ),
         ],
       ),
@@ -219,7 +219,7 @@ class _DrivePageState extends State<DrivePage> {
                             if (item['type'] == 'file') {
                               nameController.text = item['name'];
                             } else {
-                              nameController.text = item['name']
+                              nameController.text = (item['name'] as String)
                                   .split('/')
                                   .last;
                             }

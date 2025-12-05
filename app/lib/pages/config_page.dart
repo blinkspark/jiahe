@@ -1,15 +1,22 @@
+import 'package:app/controllers/config_controller.dart';
+import 'package:app/controllers/user_controller.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
+import 'package:logger/web.dart';
 
-class MePage extends StatelessWidget {
+class ConfigPage extends StatelessWidget {
+  final logger = Get.find<Logger>();
   final appState = Get.find<AppStateController>();
+  final configController = Get.put(ConfigController());
+  final userController = Get.put(UserController());
 
-  MePage({super.key});
+  ConfigPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    logger.d(configController.themeMode.value);
     return Scaffold(
       appBar: AppBar(title: Text("我的"), centerTitle: true),
       body: SingleChildScrollView(
@@ -35,7 +42,7 @@ class MePage extends StatelessWidget {
                         child: Icon(
                           Icons.person,
                           size: 30,
-                          color: Colors.white,
+                          color: Get.theme.colorScheme.onPrimary,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -44,19 +51,21 @@ class MePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              appState.isLogin.value
-                                  ? appState.username.value
+                              userController.isLogin.value
+                                  ? userController.username.value
                                   : "未登录",
                               style: Get.theme.textTheme.titleMedium,
                             ),
                             Text(
-                              appState.isLogin.value ? "已登录" : "请登录以访问更多功能",
+                              userController.isLogin.value
+                                  ? "已登录"
+                                  : "请登录以访问更多功能",
                               style: Get.theme.textTheme.bodySmall,
                             ),
                           ],
                         ),
                       ),
-                      if (!appState.isLogin.value)
+                      if (!userController.isLogin.value)
                         ElevatedButton(
                           onPressed: () {
                             Get.toNamed('/login');
@@ -81,17 +90,17 @@ class MePage extends StatelessWidget {
                                     onPressed: () {
                                       Get.back(result: true);
                                     },
-                                    child: Text('确定'),
                                     style: TextButton.styleFrom(
                                       foregroundColor: Theme.of(
                                         context,
                                       ).colorScheme.error,
                                     ),
+                                    child: Text('确定'),
                                   ),
                                 ],
                               ),
                             );
-                            if (res == true) appState.logout();
+                            if (res == true) userController.logout();
                           },
                           child: Text('注销'),
                         ),
@@ -129,23 +138,50 @@ class MePage extends StatelessWidget {
                     title: Text('主题模式'),
                     subtitle: Text('选择应用主题'),
                     children: [
-                      ListTile(
-                        title: Text('亮主题'),
-                        onTap: () {
-                          Get.changeThemeMode(ThemeMode.light);
-                        },
+                      Obx(
+                        () => ListTile(
+                          leading: Icon(
+                            Icons.brightness_7,
+                            color: Get.theme.colorScheme.primary,
+                          ),
+                          title: Text('亮主题'),
+                          selected:
+                              configController.themeMode.value ==
+                              ThemeMode.light,
+                          onTap: () {
+                            configController.setThemeMode(ThemeMode.light);
+                          },
+                        ),
                       ),
-                      ListTile(
-                        title: Text('暗主题'),
-                        onTap: () {
-                          Get.changeThemeMode(ThemeMode.dark);
-                        },
+                      Obx(
+                        () => ListTile(
+                          leading: Icon(
+                            Icons.brightness_4,
+                            color: Get.theme.colorScheme.primary,
+                          ),
+                          title: Text('暗主题'),
+                          selected:
+                              configController.themeMode.value ==
+                              ThemeMode.dark,
+                          onTap: () {
+                            configController.setThemeMode(ThemeMode.dark);
+                          },
+                        ),
                       ),
-                      ListTile(
-                        title: Text('跟随系统'),
-                        onTap: () {
-                          Get.changeThemeMode(ThemeMode.system);
-                        },
+                      Obx(
+                        () => ListTile(
+                          leading: Icon(
+                            Icons.brightness_auto,
+                            color: Get.theme.colorScheme.primary,
+                          ),
+                          title: Text('跟随系统'),
+                          selected:
+                              configController.themeMode.value ==
+                              ThemeMode.system,
+                          onTap: () {
+                            configController.setThemeMode(ThemeMode.system);
+                          },
+                        ),
                       ),
                     ],
                   ),

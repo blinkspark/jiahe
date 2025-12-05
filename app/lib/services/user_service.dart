@@ -17,4 +17,8 @@ class UserService extends GetxService {
   void onChange(void Function(AuthStoreEvent)? onData) {
     pb.authStore.onChange.listen(onData);
   }
+
+  void logout() {
+    pb.authStore.clear();
+  }
 }
