@@ -62,6 +62,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(videos[index.value]['name']),
+        backgroundColor: Get.isDarkMode
+            ? Get.theme.colorScheme.surface
+            : Get.theme.colorScheme.inverseSurface,
+        foregroundColor: Get.isDarkMode
+            ? Get.theme.colorScheme.onSurface
+            : Get.theme.colorScheme.onInverseSurface,
         centerTitle: true,
       ),
       body: Obx(() {
