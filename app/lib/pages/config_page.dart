@@ -1,5 +1,6 @@
 import 'package:app/controllers/config_controller.dart';
 import 'package:app/controllers/user_controller.dart';
+import 'package:app/pages/chats_page.dart';
 import 'package:app/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -16,7 +17,6 @@ class ConfigPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.d(configController.themeMode.value);
     return Scaffold(
       appBar: AppBar(title: Text("我的"), centerTitle: true),
       body: SingleChildScrollView(
@@ -201,6 +201,35 @@ class ConfigPage extends StatelessWidget {
                         Get.snackbar('错误', e.toString());
                       }
                     },
+                  ),
+                ],
+              ),
+            ),
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  ExpansionTile(
+                    leading: Icon(
+                      Icons.bug_report,
+                      color: Get.theme.colorScheme.primary,
+                    ),
+                    title: Text("测试"),
+                    children: [
+                      ListTile(
+                        leading: Icon(
+                          Icons.chat,
+                          color: Get.theme.colorScheme.primary,
+                        ),
+                        onTap: () {
+                          Get.to(() => ChatsPage());
+                        },
+                        title: Text("聊天"),
+                      ),
+                    ],
                   ),
                 ],
               ),

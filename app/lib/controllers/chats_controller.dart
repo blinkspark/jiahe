@@ -7,12 +7,20 @@ class ChatsController extends GetxController {
   final ChatService chatService = Get.put(ChatService());
   final filter = "all".obs;
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  // }
+  final conversations = <Map<String, dynamic>>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchConversations();
+  }
 
   void changeFilter(String value) {
     filter.value = value;
+  }
+
+  void fetchConversations() async {
+    final res = await chatService.getConversations();
+    conversations.value = res;
   }
 }

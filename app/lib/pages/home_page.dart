@@ -1,4 +1,4 @@
-import 'package:app/pages/chats_page.dart';
+import 'package:app/pages/albums_page.dart';
 import 'package:app/pages/drive_page.dart';
 import 'package:app/pages/config_page.dart';
 import 'package:app/state.dart';
@@ -15,8 +15,8 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Obx(
         () => switch (appState.homePageIndex.value) {
-          0 => ChatsPage(),
-          1 => DrivePage(),
+          0 => DrivePage(),
+          1 => AlbumsPage(),
           2 => ConfigPage(),
           _ => Center(child: Text("You should not see this.")),
         },
@@ -29,8 +29,8 @@ class HomePage extends StatelessWidget {
           elevation: 10,
           destinations: [
             // NavigationDestination(icon: Icon(Icons.home), label: '首页'),
-            NavigationDestination(icon: Icon(Icons.chat), label: '聊天'),
             NavigationDestination(icon: Icon(Icons.cloud), label: '网盘'),
+            NavigationDestination(icon: Icon(Icons.photo_album), label: '相册'),
             NavigationDestination(icon: Icon(Icons.person), label: '我的'),
           ],
         ),
